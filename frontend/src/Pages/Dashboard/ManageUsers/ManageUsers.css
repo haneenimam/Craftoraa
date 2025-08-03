@@ -1,0 +1,79 @@
+.manage-users-container {
+    width: 100vw; 
+    padding: 30px 50px; 
+    background-color: #ffffff;
+    box-sizing: border-box; 
+    border-radius: 0; 
+    box-shadow: 0 0 15px #093866;
+    margin: 0; 
+  }
+  
+  .manage-users-container h2 {
+    font-weight: bold;
+    color: #093866;
+    text-align: center;
+  }
+  
+  .manage-users-container .alert {
+    border-radius: 8px;
+  }
+  
+  .manage-users-container .table {
+    margin-top: 20px;
+    border-collapse: collapse;
+  }
+  
+  .manage-users-container .table th,
+  .manage-users-container .table td {
+    vertical-align: middle;
+    text-align: center;
+  }
+  
+  .manage-users-container .table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
+  }
+  
+  .manage-users-container .table-striped tbody tr:hover {
+    background-color: #eef2f7;
+  }
+  
+  .manage-users-container .btn {
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .manage-users-container .btn-warning {
+    background-color: #ffc107;
+    border: none;
+    color: #000;
+  }
+  
+  .manage-users-container .btn-warning:hover {
+    background-color: #e0a800;
+  }
+  
+  .manage-users-container .btn-danger {
+    background-color: #dc3545;
+    border: none;
+  }
+  
+  .manage-users-container .btn-danger:hover {
+    background-color: #c82333;
+  }
+  
+  .manage-users-container .btn-success {
+    background-color: #28a745;
+    border: none;
+  }
+  
+  .manage-users-container .btn-success:hover {
+    background-color: #218838;
+  }
+  
+  .manage-users-container .form-control {
+    font-size: 14px;
+    padding: 5px 10px;
+    border-radius: 6px;
+  }

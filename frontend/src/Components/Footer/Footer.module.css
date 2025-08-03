@@ -1,0 +1,140 @@
+.custom-footer {
+  background-color: #093866;
+  color: rgba(255, 255, 255, 0.95);
+  padding: 1rem 1rem;
+  text-align: center;
+  margin-top: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.custom-footer .container {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+
+.logoImage {
+  width: 150px;
+  height: 70px;
+  border-radius: 5px;
+  object-fit: cover;
+  border: 2px solid #093866;
+  cursor: pointer;
+  position: absolute;
+  left: 1rem;
+  top: 10%;
+
+}
+
+
+
+
+.text-center {
+  flex: 1 1 100%;
+  width: 100%;
+  text-align: center;
+}
+
+
+.contact-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.contact-label {
+  font-weight: bold;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.95);
+  white-space: nowrap;
+}
+
+.contact-icons {
+  display: flex;
+  gap: 20px;
+  font-size: 18px;
+  flex-wrap: nowrap;
+}
+
+.contact-icons svg {
+  color: rgba(255, 255, 255, 0.95);
+  transition: color 0.3s ease;
+  cursor: pointer;
+}
+
+.contact-icons svg:hover {
+  color: #efeaeac4;
+}
+
+
+@media (hover: none) and (pointer: coarse) {
+  .contact-icons svg:hover {
+    color: rgba(255, 255, 255, 0.95) !important;
+    cursor: default;
+  }
+}
+
+
+
+@media (max-width: 768px) {
+  .custom-footer .container {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center;
+    position: relative;
+  }
+
+  .logoImage {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    margin-bottom: 0.75rem;
+    width: 120px;
+    height: 56px;
+  }
+
+  .contact-row {
+    gap: 15px;
+  }
+
+  .contact-label {
+    font-size: 0.9rem;
+  }
+
+  .contact-icons {
+    gap: 15px;
+  }
+}
+
+@media (max-width: 414px) {
+  .contact-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .contact-icons {
+    font-size: 16px;
+    gap: 10px;
+  }
+
+  .contact-label {
+    font-size: 0.85rem;
+    white-space: normal;
+  }
+}
+
+@media (max-width: 360px) {
+  .custom-footer {
+    padding: 1rem 0.5rem;
+  }
+}

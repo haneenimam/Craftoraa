@@ -1,0 +1,461 @@
+.checkoutContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: 'Josefin Sans', 'Overpass', sans-serif;
+  color: #093866;
+  box-sizing: border-box;
+}
+
+.checkoutForm {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  margin: 30px 0 15px;
+  font-weight: 600;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+  text-align: left;
+}
+
+.formGroup {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.formGroup label {
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.formGroup input,
+.formGroup select {
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 100%;
+  background-color: #fff;
+  transition: border-color 0.3s ease;
+  min-height: 48px;
+  box-sizing: border-box;
+}
+
+
+.selectInput {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 1em;
+  padding-right: 2.5em;
+  cursor: pointer;
+}
+
+
+.formGroup select[name="paymentMethod"] {
+  font-weight: 600;
+  background-color: #f8f9fa;
+  border: 2px solid #e9ecef;
+}
+
+
+.formGroup select[name="governate"] {
+  font-weight: 500;
+}
+
+.orderSummary {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 30px 0;
+}
+
+.summaryItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid #eaeaea;
+  flex-wrap: nowrap;
+}
+
+.itemDetails {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.itemDetails img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.infoWrapper {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: nowrap;
+  flex: 1;
+}
+
+.titleAndPrice {
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+  font-weight: 600;
+  color: #093866;
+}
+
+.productTitle {
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.productPrice {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #555;
+}
+
+.quantityNumber {
+  font-weight: 600;
+  font-size: 1rem;
+  min-width: 30px;
+  text-align: center;
+  color: #093866;
+}
+
+.productTotalPrice {
+  font-weight: 600;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  min-width: 90px;
+  text-align: right;
+  color: #093866;
+}
+
+.qtyControls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 90px;
+}
+
+.qtyButton {
+  background-color: #093866;
+  color: rgba(245, 248, 248, 0.9);
+  border: none;
+  padding: 4px 8px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+  min-width: 28px;
+  height: 28px;
+}
+
+.qtyButton:hover:not(:disabled) {
+  background-color: #04213f;
+}
+
+.qtyButton:disabled {
+  background-color: #093866;
+  cursor: not-allowed;
+}
+
+.quantity {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 6px;
+  text-align: center;
+  min-width: 24px;
+}
+
+.priceContainer {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.currency {
+  margin-left: 4px;
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.total {
+  font-size: 1.7rem;
+  font-weight: 600;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.submitButton {
+  background-color: #093866;
+  color: rgba(245, 248, 248, 0.9);
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submitButton:hover {
+  background-color: #04213f;
+}
+
+.inputError {
+  border: 1px solid red;
+}
+
+.errorMsg {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #093866;
+  box-shadow: 0 0 2px #093866;
+}
+
+
+@media (max-width: 480px) {
+  .checkoutContainer {
+    padding: 20px 12px;
+    max-width: 100%;
+  }
+
+  .checkoutForm {
+    padding: 18px;
+  }
+
+  .sectionTitle {
+    font-size: 1.25rem;
+    margin: 20px 0 12px;
+    padding-bottom: 4px;
+  }
+
+  .formGroup {
+    margin-bottom: 14px;
+  }
+
+  .formGroup label {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+  }
+
+  .formGroup input,
+  .formGroup select {
+    font-size: 0.95rem;
+    padding: 10px 12px;
+    min-height: 44px;
+  }
+
+
+  .selectInput {
+    padding: 10px 12px;
+    background-position: right 10px center;
+    background-size: 0.9em;
+    padding-right: 2.2em;
+  }
+
+ 
+  .formGroup select[name="paymentMethod"] {
+    font-size: 0.95rem;
+    border-width: 1px;
+    background-color: #f5f7fa;
+  }
+
+
+  .formGroup select[name="governate"] {
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+
+  .summaryItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 0;
+  }
+
+  .itemDetails {
+    gap: 0px;
+    width: 50%;
+  }
+
+  .itemDetails img {
+    width: 42px;
+    height: 42px;
+  }
+
+  .infoWrapper {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .titleAndPrice {
+    min-width: auto;
+    font-size: 0.95rem;
+  }
+
+  .quantityNumber,
+  .productTotalPrice,
+  .qtyControls {
+    min-width: auto;
+    text-align: left;
+    font-size: 0.9rem;
+  }
+
+  .qtyControls {
+    gap: 4px;
+    margin-top: 4px;
+  }
+
+  .qtyButton {
+    padding: 3px 6px;
+    font-size: 12px;
+    min-width: 26px;
+    height: 26px;
+  }
+
+  .total {
+    font-size: 1.4rem;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .submitButton {
+    padding: 12px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 767px) {
+  .checkoutContainer {
+    padding: 25px 15px;
+    max-width: 100%;
+  }
+
+  .checkoutForm {
+    padding: 22px;
+  }
+
+  .sectionTitle {
+    font-size: 1.35rem;
+    margin: 25px 0 15px;
+  }
+
+  .formGroup {
+    margin-bottom: 15px;
+  }
+
+  .formGroup input,
+  .formGroup select {
+    font-size: 0.98rem;
+    padding: 11px 12px;
+    min-height: 46px;
+  }
+
+
+  .selectInput {
+    background-size: 0.95em;
+    padding-right: 2.3em;
+  }
+
+
+  .formGroup select[name="paymentMethod"] {
+    font-size: 1rem;
+    border-width: 1.5px;
+  }
+
+
+  .formGroup select[name="governate"] {
+    font-size: 0.98rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .checkoutContainer {
+    max-width: 680px;
+    padding: 30px 20px;
+  }
+
+  .checkoutForm {
+    padding: 25px;
+  }
+
+  .sectionTitle {
+    font-size: 1.4rem;
+    margin: 25px 0 15px;
+  }
+
+  .formGroup input,
+  .formGroup select {
+    font-size: 1rem;
+    padding: 12px;
+  }
+
+
+  .selectInput {
+    padding: 12px;
+    background-position: right 12px center;
+  }
+
+
+  .formGroup select[name="paymentMethod"] {
+    font-size: 1.05rem;
+    border-width: 1.5px;
+  }
+
+  .summaryItem {
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .itemDetails img {
+    width: 48px;
+    height: 48px;
+  }
+
+  .infoWrapper {
+    flex-direction: row;
+    gap: 18px;
+  }
+
+  .total {
+    font-size: 1.6rem;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+@media (min-width: 1025px) {
+ 
+}

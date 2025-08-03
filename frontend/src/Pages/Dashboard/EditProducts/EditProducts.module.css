@@ -1,0 +1,190 @@
+.productsPage {
+  width: auto;
+  background-color: #fdfdfd;
+  padding: 20px;
+  margin-bottom: 25px;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.productsPage h2 {
+  font-weight: 700;
+  color: #093866;
+}
+
+.formSection {
+  background-color: #f8f9fa;
+  color: #093866;
+}
+
+.inputControl,
+.formControl {
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+
+.formControl:focus {
+  color: #093866 !important;
+  outline: none;
+  border-color: #093866;
+  box-shadow: 0 0 2px #093866;
+}
+
+.btnWarning {
+  background-color: #093866;
+  border: none;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 6px;
+  padding: 6px 12px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+.btnWarning:hover {
+  background-color: #092a4d;
+  color: white;
+}
+
+.tableCell {
+  vertical-align: middle;
+  color: #093866 !important;
+  font-weight: 500;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.tableHover tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.customAddBtn {
+  background-color: #093866;
+  border: none;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 6px;
+  padding: 10px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+.customAddBtn:hover {
+  background-color: #092a4d;
+  color: white;
+}
+
+.tableHead {
+  background-color: #093866 !important;
+}
+
+.tableHead th {
+  color: white !important;
+  background-color: #093866 !important;
+  border-bottom: 2px solid #06274e !important;
+}
+
+.tableStyle {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(9, 56, 102, 0.08);
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.paginationWrapper {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.paginationBtn {
+  padding: 10px 20px;
+  background-color: #093866;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+
+}
+
+.paginationBtn:hover:not(:disabled) {
+  background-color: #07294a;
+}
+
+.paginationBtn:disabled {
+  background-color: #ccc;
+  color: #093866;
+  cursor: not-allowed;
+}
+
+.pageNumber {
+  font-size: 18px;
+  font-weight: 600;
+  color: #093866;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .productsPage {
+    margin: 0 15px 10px;
+    padding: 15px 10px;
+  }
+
+  .formSection {
+    padding: 15px 10px;
+  }
+
+  .inputControl {
+    font-size: 14px;
+  }
+
+  .tableStyle {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    border-radius: 12px;
+  }
+
+  .tableStyle thead tr th,
+  .tableStyle tbody tr td {
+    width: 25%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+  }
+
+  .tableStyle tbody tr td {
+    font-size: 14px;
+    padding: 8px 5px;
+  }
+
+  .btnWarning,
+  .customAddBtn {
+    font-size: 1rem;
+    padding: 12px;
+    width: 100%;
+    border-radius: 10px;
+  }
+
+  .paginationWrapper {
+    flex-direction: row;
+  }
+
+  .paginationBtn {
+    font-size: 1.1rem;
+  }
+
+  .pageNumber {
+    margin: 10px 0;
+  }
+}

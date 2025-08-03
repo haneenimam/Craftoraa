@@ -1,0 +1,158 @@
+
+.loginContainer {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:  #c7d5e1;
+  padding: 20px;
+}
+
+.loginCard {
+  max-width: 500px;
+  width: 100%;
+  padding: 30px;
+  border-radius: 16px;
+  background-color: #ffffff;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.3s ease-in-out;
+}
+h2 {
+  color: #093866;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.formLabel {
+  color: #093866 !important;
+  margin-bottom: 0.25rem !important;
+  font-weight: 500;
+}
+
+.inputField {
+  padding: 10px 8px;
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  transition: all 0.3s ease;
+  color: #093866;
+}
+
+.inputField:focus {
+  color: #093866 !important;
+  outline: none;
+  border-color: #093866;
+  box-shadow: 0 0 2px #093866;
+}
+
+.customLoginBtn {
+  background-color: #093866 !important;
+  color: rgba(245, 248, 248, 0.9) !important;
+  border: none !important;
+  padding: 12px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  width: 100%;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+.customLoginBtn:hover {
+  background-color: #092a4d !important;
+}
+
+.loginPrompt {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 1.3rem;
+  color: #093866;
+  font-weight: 800;
+}
+
+.loginPrompt a {
+  text-decoration: none;
+  color: #1e72f1;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.loginPrompt a:hover {
+  text-decoration: underline;
+  color: rgb(13, 40, 80);
+  font-size: larger;
+}
+
+.invalidFeedback {
+  color: #dc3545;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+
+@media (max-width: 768px) {
+  .loginCard {
+    padding: 25px;
+  }
+  
+  h2 {
+    font-size: 1.8rem;
+  }
+  
+  .loginPrompt {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .loginCard {
+    padding: 20px;
+    width: 95%;
+  }
+  
+  h2 {
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+  }
+  
+  .formLabel {
+    font-size: 0.95rem;
+  }
+  
+  .customLoginBtn {
+    padding: 10px;
+    font-size: 1rem;
+  }
+  
+  .loginPrompt {
+    font-size: 1rem;
+  }
+}
+.forgotPasswordWrapper {
+  text-align: left;
+  margin-top: 7px;
+}
+
+.forgotPasswordLink {
+  color: gray;
+  font-size: 0.97rem;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  font-weight: 500;
+}
+
+.forgotPasswordLink:hover {
+  color:#093866;
+  text-decoration: underline;
+}
+
+@media (max-width: 400px) {
+  .loginPrompt {
+    font-size: 0.9rem;
+  }
+  
+  .loginPrompt a:hover {
+    font-size: 1rem;
+  }
+}

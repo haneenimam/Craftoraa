@@ -1,0 +1,26 @@
+{
+    "products": [
+      {
+        "id": 1,
+        "name": "Vintage Backpack",
+        "description": "Stylish and spacious backpack for everyday use.",
+        "price": 49.99,
+        "image": "https://via.placeholder.com/300x200?text=Backpack"
+      },
+      {
+        "id": 2,
+        "name": "Wireless Headphones",
+        "description": "Noise-cancelling over-ear headphones with Bluetooth.",
+        "price": 89.99,
+        "image": "https://via.placeholder.com/300x200?text=Headphones"
+      },
+      {
+        "id": 3,
+        "name": "Smart Watch",
+        "description": "Track your health and stay connected on the go.",
+        "price": 129.99,
+        "image": "https://via.placeholder.com/300x200?text=Smart+Watch"
+      }
+    ]
+  }
+  

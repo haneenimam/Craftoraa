@@ -1,0 +1,183 @@
+.contactContainer {
+  max-width: 600px;
+  margin: auto;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: #fdfdfd;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  font-family: "Overpass", sans-serif;
+  box-sizing: border-box;
+}
+
+.contactTitle {
+  color: #093866;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.contactForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contactForm input,
+.contactForm textarea,
+.contactForm select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  background-color: white;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 30px;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23093866' height='12' viewBox='0 0 24 24' width='12' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+}
+
+.contactForm input:focus,
+.contactForm textarea:focus,
+.contactForm select:focus {
+  outline: none;
+  border-color: #093866;
+  box-shadow: 0 0 2px #093866;
+}
+
+.contactForm button {
+  background-color: #093866;
+  color: rgba(245, 248, 248, 0.9);
+  padding: 0.75rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 0;
+}
+
+.contactForm button:hover {
+  background-color: #04213f;
+  color: rgba(245, 248, 248, 0.9);
+}
+
+.errorText {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.errorInput {
+  border-color: red !important;
+}
+
+.charCount {
+  font-weight: 600;
+  margin-top: 4px;
+  font-size: 0.9rem;
+}
+
+@media (min-width: 600px) and (max-width: 1024px) {
+  .contactContainer {
+    max-width: none;
+    width: 80vw;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .contactTitle {
+    font-size: 1.6rem;
+  }
+
+  .contactForm input,
+  .contactForm textarea,
+  .contactForm select {
+    font-size: 1rem;
+    padding: 8px 12px;
+  }
+
+  .contactForm button {
+    padding: 0.75rem;
+    font-size: 1rem;
+  }
+
+  .charCount {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .contactContainer {
+    width: 90vw;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .contactTitle {
+    font-size: 1.4rem;
+  }
+
+  .contactForm input,
+  .contactForm textarea,
+  .contactForm select {
+    font-size: 0.95rem;
+    padding: 6px 10px;
+
+    appearance: menulist-button;
+    -webkit-appearance: menulist-button;
+    -moz-appearance: menulist-button;
+
+    background-image: none;
+    padding-right: 12px;
+  }
+
+  .contactForm button {
+    padding: 0.6rem;
+    font-size: 0.95rem;
+  }
+
+  .charCount {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .contactContainer {
+    width: 95vw;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .contactTitle {
+    font-size: 1.2rem;
+  }
+
+  .contactForm input,
+  .contactForm textarea,
+  .contactForm select {
+    font-size: 0.85rem;
+    padding: 5px 8px;
+
+    appearance: menulist-button;
+    -webkit-appearance: menulist-button;
+    -moz-appearance: menulist-button;
+
+    background-image: none;
+    padding-right: 10px;
+  }
+
+  .contactForm button {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .charCount {
+    font-size: 0.8rem;
+  }
+}

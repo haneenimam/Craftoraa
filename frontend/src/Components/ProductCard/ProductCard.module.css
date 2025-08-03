@@ -1,0 +1,214 @@
+.card {
+  font-family: 'Josefin Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 20px; 
+  height: 480px; 
+  box-sizing: border-box;
+  transition: transform 0.3s;
+  min-width: 290px; 
+  max-width: 300px;
+  width: auto;
+  margin-bottom: 20px; 
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+.image {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.details {
+  padding: 10px 0 0 0; 
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* push actions to bottom */
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+.cartButton,
+.buyButton {
+  padding: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cartButton {
+  background-color: #093866;
+  color: rgba(245, 248, 248, 0.9);
+}
+
+.cartButton:hover {
+  background-color: #092a4d;
+}
+
+.buyButton {
+  background-color: grey;
+  color: rgba(245, 248, 248, 0.9);
+}
+
+.buyButton:hover {
+  background-color: #555;
+}
+
+.cartButton:disabled,
+.buyButton:disabled {
+  background-color: #ccc !important;
+  color: #666 !important;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.title {
+  padding-left: 10px;
+  font-size: 27px; 
+  color: #093866;
+  margin-bottom: 3px; 
+}
+
+.priceContainer {
+  padding-left: 15px;
+  margin-bottom: 15px; 
+  gap: 4px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.price {
+  padding-left: 0;
+  font-size: 23px;
+  font-weight: 500;
+  color: #444;
+  margin: 0;
+  line-height: 1;
+}
+
+.currency {
+  font-size: 14px;
+  color: #444;
+  margin: 0;
+}
+
+.stockStatus {
+  font-size: 14px;
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+  margin-left: auto; 
+}
+
+/* Tablets */
+@media (max-width: 1024px) {
+  .card {
+    height: auto;       
+    min-height: 380px;  
+  }
+
+  .image {
+    height: 180px;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+
+  .price {
+    font-size: 20px;
+  }
+
+  .cartButton,
+  .buyButton {
+    font-size: 15px;
+    padding: 8px;
+  }
+}
+
+/* Small Devices */
+@media (max-width: 600px) {
+  .card {
+    min-width: unset;
+    max-width: 280px;
+    min-height: unset;
+    max-height: 480px;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 8px;
+    height: auto; 
+  }
+
+  .image {
+    height: 160px;
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .price {
+    font-size: 18px;
+  }
+
+  .currency {
+    font-size: 12px;
+  }
+
+  .stockStatus {
+    font-size: 12px;
+  }
+
+  .cartButton,
+  .buyButton {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 8px;
+    margin-top: auto;
+  }
+}
+
+@media (max-width: 400px) {
+  .card {
+    padding: 8px;
+    min-width: 200px;
+    margin-bottom: 20px;
+  }
+
+  .actions {
+    gap: 6px;
+    margin-top: auto;
+  }
+}
+
+@media (max-width: 430px) {
+  .card {
+    min-width: unset;
+    width: 100%;
+    margin-bottom: 15px;
+  } 
+}

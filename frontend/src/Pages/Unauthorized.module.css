@@ -1,0 +1,33 @@
+.unauthorizedContainer {
+  height: 100vh;
+  background-color: #c7d5e1;
+  font-family: 'Josefin Sans', sans-serif;
+  padding: 2rem;
+}
+
+.title {
+  font-size: 3rem;
+  color: #093866;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.message {
+  font-size: 1.25rem;
+  color: #093866;
+  margin-bottom: 2rem;
+}
+
+.homeLink {
+  background-color: #093866 !important;
+  color: white !important;
+  padding: 0.5rem 1.5rem;
+  font-weight: 500;
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+}
+
+.homeLink:hover {
+  background-color: #062744 !important;
+}

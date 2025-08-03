@@ -1,0 +1,112 @@
+.Div1{
+  background-color: #c7d5e1;
+}
+.dashboardContainer {
+  background-color: #f8f9fa;
+  padding: 40px 50px;
+  margin: 0 15px 15px 15px; 
+  box-sizing: border-box;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.dashboardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+
+.dashboardHeader h2 {
+  margin: 0;
+  font-weight: bold;
+  color: #093866;
+  flex-grow: 1;
+}
+
+.table {
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.table thead {
+  background-color: #343a40;
+  color: white;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.alert {
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.btnLogout {
+  border-radius: 25px;
+  padding: 10px 20px;
+  font-weight: 500;
+  background-color: #093866;
+  color: rgba(245, 248, 248, 0.9) ;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btnLogout:hover {
+  background-color:#092a4d;
+  color: rgba(245, 248, 248, 0.9) ;
+}
+
+
+@media (max-width: 768px) {
+  .dashboardContainer {
+    padding: 20px 15px;
+  }
+  
+  .table tbody tr td {
+ direction: rtl !important;
+    text-align: right !important;
+    
+  }
+
+  .dashboardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btnLogout {
+    width: 100%;
+    text-align: center;
+  }
+
+
+  .table thead {
+    display: none;
+  }
+
+  .table tbody tr {
+    display: block;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+  }
+
+  .table tbody tr td {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+  }
+
+  .table tbody tr td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    color: #093866;
+    flex-basis: 40%;
+  }
+}

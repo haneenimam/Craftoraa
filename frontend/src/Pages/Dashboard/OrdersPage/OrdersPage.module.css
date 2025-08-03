@@ -1,0 +1,104 @@
+.ordersPageContainer {
+
+  background-color: #fdfdfd;
+  padding: 20px;
+  margin: 0 15px 15px 15px;  
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.ordersPageContainer h2 {
+  font-weight: bold;
+  color: #093866;
+  text-align: center;
+
+}
+
+.customTable {
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.customTable thead th {
+  background-color: #093866 !important;
+  color: white;
+  vertical-align: middle;
+  text-align: center;
+  padding: 12px;
+  border-bottom: 2px solid #06274e !important;
+}
+
+.customTable tbody td {
+  vertical-align: middle;
+  text-align: center;
+  padding: 12px;
+}
+
+.customTable tbody tr:nth-of-type(odd) {
+  background-color: #f9f9f9;
+}
+
+.customTable tbody tr:hover {
+  background-color: #e9ecef;
+}
+
+
+.productItem {
+  margin-bottom: 6px;
+  text-align: left;
+  color: #212529;
+  font-weight: 500;
+}
+
+.quantity {
+  color: #555;
+  font-weight: normal;
+  margin-left: 6px;
+}
+
+
+@media (max-width: 768px) {
+  .ordersPageContainer {
+    padding: 15px;
+    margin: 30px 10px;
+  }
+
+  .customTable thead {
+    display: none;
+  }
+
+  .customTable tbody tr {
+    display: block;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: white;
+  }
+
+  .customTable tbody td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+    direction: ltr;
+  }
+
+  .customTable tbody td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    color: #093866;
+    flex-basis: 40%;
+    text-align: left;
+    direction: ltr;
+  }
+
+
+  .productItem {
+    margin-bottom: 4px;
+  }
+}

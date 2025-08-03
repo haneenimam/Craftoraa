@@ -1,0 +1,162 @@
+.manage-users-container {
+  padding: 30px 50px;
+  background-color: #ffffff;
+  box-sizing: border-box;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  margin: 0 15px 25px 15px;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+
+.manage-users-container h2 {
+  font-weight: bold;
+  color: #093866;
+  text-align: center;
+}
+
+.alert {
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.table {
+  margin-top: 20px;
+  border-collapse: collapse;
+  width: 100%;
+  background-color: white;
+  border-radius: 10px;
+  border: #000 1px solid;
+  overflow: hidden;
+}
+
+.table th,
+.table td {
+  vertical-align: middle;
+  text-align: center;
+  padding: 12px;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: #f9f9f9;
+}
+
+.table-striped tbody tr:hover {
+  background-color: #eef2f7;
+}
+
+.btn {
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-warning {
+  background-color: #093866;
+  border: none;
+  color: rgba(245, 248, 248, 0.9) ;
+}
+
+.btn-warning:hover {
+  background-color: #092a4d;
+  color: rgba(245, 248, 248, 0.9);
+}
+
+.btn-danger {
+  background-color:#dc3545;
+  border: none;
+  color: rgba(245, 248, 248, 0.9) ;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+  color: rgba(245, 248, 248, 0.9) ;
+}
+
+.btn-success {
+  background-color: #28a745;
+  border: none;
+  color: rgba(245, 248, 248, 0.9) ;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+  color: rgba(245, 248, 248, 0.9) ;
+}
+.btn-cancel {
+  background-color: grey; 
+  border: none;
+  color: rgba(245, 248, 248, 0.9);
+}
+
+.btn-cancel:hover {
+  background-color:#555;
+  color: rgba(245, 248, 248, 0.9);
+}
+
+
+.form-control,
+.form-select {
+  font-size: 14px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  width: 100%;
+}
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+
+@media (max-width: 768px) {
+  .manage-users-container {
+    padding: 20px 15px;
+    direction: ltr;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .table thead {
+    display: none;
+  }
+
+  .table tbody tr {
+    display: block;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+  }
+
+  .table tbody tr td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+    direction: ltr;
+  }
+
+  .table tbody tr td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    color: #093866;
+    flex-basis: 40%;
+    text-align: left;
+    direction: rtl; 
+  }
+
+  .btn {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+
+  .form-control,
+  .form-select {
+    width: 100%;
+  }
+}
