@@ -134,11 +134,6 @@ npm run dev
 Frontend runs on: http://localhost:5173
 Backend runs on: http://localhost:5000/api
 
-
-![Homepage](screenshots/home.png)
-![Product Page](screenshots/product.png)
-![Admin Panel](screenshots/admin.png)
-
 Future Improvements:
 -Add product reviews and ratings
 -Enable image uploads using cloud storage 
