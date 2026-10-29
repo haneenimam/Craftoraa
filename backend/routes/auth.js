@@ -6,44 +6,6 @@ const nodemailer = require("nodemailer");
 const User = require("../models/User");
 const { auth, roleCheck } = require("../middleware/auth"); 
 
-// ===== REGISTER =====
-/* router.post("/register", async (req, res) => {
-  try {
-    const { firstName, lastName, email, password, role } = req.body;
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
-    }
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const newUser = new User({
-      firstName,
-      lastName,
-      email,
-      password: hashedPassword,
-      role,
-    });
-
-    await newUser.save();
-
-    res.status(201).json({
-      message: "User registered successfully",
-      user: {
-        firstName,
-        lastName,
-        email,
-        role,
-      },
-    });
-  } catch (error) {
-    console.error("Registration error:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
-  }
-}); */
-
 // ===== REGISTER (Public - Default to User Role) =====
 router.post("/register", async (req, res) => {
   try {
@@ -186,62 +148,72 @@ router.get("/verify", (req, res) => {
 
 // ===== FORGOT PASSWORD =====
 router.post("/forgot-password", async (req, res) => {
-  const { email } = req.body;
+  try {
+    const { email } = req.body;
 
-  const user = await User.findOne({ email });
-  if (!user)
-    return res.status(404).json({ success: false, message: "User not found" });
+    const user = await User.findOne({ email });
+    if (!user)
+      return res.status(404).json({ success: false, message: "User not found" });
 
-  const code = Math.floor(1000 + Math.random() * 9000).toString();
-  const expires = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
+    const code = Math.floor(1000 + Math.random() * 9000).toString();
+    const expires = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
 
-  user.resetCode = code;
-  user.resetCodeExpires = expires;
-  await user.save();
+    user.resetCode = code;
+    user.resetCodeExpires = expires;
+    await user.save();
 
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
 
-  await transporter.sendMail({
-    from: process.env.EMAIL_USER,
-    to: user.email,
-    subject: "Reset your password",
-    text: `Your reset code is: ${code}`,
-  });
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: user.email,
+      subject: "Reset your password",
+      text: `Your reset code is: ${code}`,
+    });
 
-  res.json({ success: true, userId: user._id });
+    res.json({ success: true, userId: user._id });
+  } catch (error) {
+    console.error("Forgot password error:", error);
+    res.status(500).json({ success: false, message: "Failed to send reset email", error: error.message });
+  }
 });
 
 // ===== RESET PASSWORD =====
 router.post("/reset-password", async (req, res) => {
-  const { userId, email, code, newPassword } = req.body;
+  try {
+    const { userId, email, code, newPassword } = req.body;
 
-  const user = await User.findOne({ _id: userId, email });
-  if (!user)
-    return res.status(404).json({ success: false, message: "User not found" });
+    const user = await User.findOne({ _id: userId, email });
+    if (!user)
+      return res.status(404).json({ success: false, message: "User not found" });
 
-  if (
-    !user.resetCode ||
-    user.resetCode !== code ||
-    user.resetCodeExpires < new Date()
-  ) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Invalid or expired code" });
+    if (
+      !user.resetCode ||
+      user.resetCode !== code ||
+      user.resetCodeExpires < new Date()
+    ) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid or expired code" });
+    }
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    user.password = hashed;
+    user.resetCode = null;
+    user.resetCodeExpires = null;
+    await user.save();
+
+    res.json({ success: true, message: "Password reset successful" });
+  } catch (error) {
+    console.error("Reset password error:", error);
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
-
-  const hashed = await bcrypt.hash(newPassword, 10);
-  user.password = hashed;
-  user.resetCode = null;
-  user.resetCodeExpires = null;
-  await user.save();
-
-  res.json({ success: true, message: "Password reset successful" });
 });
 
 module.exports = router;

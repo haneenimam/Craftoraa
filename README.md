@@ -1,146 +1,161 @@
-# Craftoraa - Handmade Crafts E-commerce Platform
+# Craftora — Handmade Crafts E-commerce
 
-Craftoraa is a full-stack e-commerce web application designed to support local artisans in selling handmade crafts online. The application provides a seamless shopping experience for customers and robust product management tools for sellers and administrators. Built using the MERN (MongoDB, Express, React, Node.js) stack, it offers a secure, scalable, and responsive architecture suitable for real-world deployment.
+Craftora is a full-stack e-commerce web app for local artisans selling handmade crafts: pearl jewelry, crochet, ceramics, candles and home essentials. Shoppers browse and buy in English or Arabic; sellers manage their products; admins manage users, products and orders.
 
----
+Built with the MERN stack (MongoDB, Express, React, Node.js) as a graduation project.
 
-## Project Overview
-
-The goal of Craftoraa is to promote handmade and local crafts by providing a digital platform where:
-- Buyers can browse and purchase products
-- Sellers can manage their listings
-- Admins can oversee platform-wide activity and user roles
-
-The platform handles secure user authentication, role-based authorization, and online payments using Stripe.
+📘 **Full documentation** — architecture, data model, API, payments, configuration, deployment guide and troubleshooting: [docs/PROJECT_OVERVIEW.md](docs/PROJECT_OVERVIEW.md)
 
 ---
 
-## Technology Stack
+## Features
 
-### Frontend
-- React with Vite
-- Redux Toolkit
-- React Router
-- Axios
-- Bootstrap
+**Shoppers**
+- Browse by category, search by name, filter by price
+- Full English / Arabic interface (right-to-left in Arabic)
+- Cart saved in the browser
+- Checkout with cash on delivery, or by card through Stripe Checkout
+- Sign up, log in, reset a forgotten password by email
+- Contact form that emails the shop
 
-### Backend
-- Node.js & Express.js
-- MongoDB with Mongoose
-- JWT for authentication
-- bcryptjs for password hashing
-- Stripe for payment processing
-- Nodemailer for contact and password recovery emails
+**Sellers**
+- Add and edit their own products
+- See orders that include their products
 
----
-
-## Core Features
-
-### Buyer Features
-- Browse products by category
-- View detailed product pages
-- Add or remove items from the cart
-- Checkout securely using Stripe
-- View past orders
-
-### Seller Features
-- Add new products (title, price, description, images)
-- View and manage their own products
-- Access their orders related to their listed items
-
-### Admin Features
-- View and manage all users
-- Promote or demote users (User <-> Seller <-> Admin)
-- Manage all products and platform-wide orders
+**Admins**
+- View, edit, delete users and change roles (User / Seller / Admin)
+- Create Seller and Admin accounts
+- Edit and delete any product
+- Orders overview
 
 ---
 
-## Authentication & Authorization
+## Tech stack
 
-### Authentication
-- Registration and login handled via `/api/auth`
-- Passwords are securely hashed using `bcryptjs`
-- JWTs are generated upon login and stored client-side
-
-### Authorization
-- Middleware enforces role-based access (User, Seller, Admin)
-- Admin routes are protected by both authentication and role checks
-- Frontend uses PrivateRoute wrappers for protected views
+| Frontend | Backend |
+|---|---|
+| React 18 + Vite | Node.js + Express |
+| React Router | MongoDB + Mongoose |
+| Bootstrap / React-Bootstrap | JWT authentication, bcryptjs |
+| Axios | Stripe Checkout |
+| | Nodemailer (Gmail) |
 
 ---
 
-## Stripe Integration (Checkout & Payments)
+## Project structure
 
-- The application integrates Stripe Checkout on the frontend
-- Payment processing happens via `/api/payment/create-checkout-session`
-- Card details are handled securely by Stripe and are not stored
-- Stripe Webhooks are set up to listen for successful payments and future event handling
-
----
-
-## Database Design
-
-The application uses MongoDB with the following main collections:
-
-| Collection | Key Fields |
-|------------|------------|
-| **Users**  | firstName, lastName, email, password (hashed), role (User/Seller/Admin) |
-| **Products** | title, description, price, category, stock, seller (ref), images (URLs) |
-| **Orders** | user (ref), items[], shippingInfo, totalPrice, status |
-| **Cart** | user (ref), items[] (product ref + quantity) |
-
----
-
-## Project Structure
-
+```
 Craftoraa/
-├── frontend/ # React Vite app
-│ ├── public/
-│ └── src/
-│ ├── components/
-│ ├── pages/
-│ ├── redux/
-│ └── main.jsx
-│
-├── backend/ # Express.js API
-│ ├── routes/
-│ ├── models/
-│ ├── middleware/
-│ ├── controllers/
-│ └── server.js
-│
-├── README.md
-└── .gitignore
+├── backend/
+│   ├── middleware/auth.js     # JWT check + role check
+│   ├── models/                # User, Product, Order, Cart
+│   ├── routes/                # auth, products, orders, admin, payment, contact, cart
+│   ├── seed.js                # creates the first admin + sample products
+│   ├── server.js              # Express app entry point
+│   └── .env.example
+└── frontend/
+    ├── public/                # images, logo, SPA redirect rule
+    ├── src/
+    │   ├── Apis/config.js     # Axios instance (uses VITE_API_BASE_URL)
+    │   ├── Components/        # Navbar, Footer, ProductCard, home sections
+    │   ├── Context/           # Auth, Cart, Language providers
+    │   ├── Pages/             # Shop pages, checkout, auth, admin dashboard
+    │   └── App.jsx            # Routes
+    └── .env.example
+```
 
+---
 
-## Getting Started (Run Locally)
+## Run it locally
 
-### Prerequisites
-- Node.js & npm
-- MongoDB Atlas or local instance
+**You need:** Node.js 18 or newer, and a MongoDB database — either a MongoDB Atlas connection string, or MongoDB running locally (for example with Docker):
 
-### 1. Clone the Repository
-git clone https://github.com/haneenimam/Craftoraa.git
-cd Craftoraa
-2. Setup Backend
+```bash
+docker run -d --name craftora-mongo -p 27017:27017 -v craftora-mongo-data:/data/db mongo:8.0
+```
+
+### 1. Backend
+
+```bash
 cd backend
 npm install
-cp .env.example .env 
-npm run dev
-3. Setup Frontend
-cd ../frontend
+cp .env.example .env      # then fill in the values (see below)
+npm run seed              # creates your admin account + 24 sample products
+npm run dev               # or: npm start
+```
+
+The API runs on http://localhost:5000 — check http://localhost:5000/health.
+
+### 2. Frontend
+
+```bash
+cd frontend
 npm install
+cp .env.example .env
 npm run dev
-Frontend runs on: http://localhost:5173
-Backend runs on: http://localhost:5000/api
+```
 
-Future Improvements:
--Add product reviews and ratings
--Enable image uploads using cloud storage 
--Add delivery status notifications via email
+Open http://localhost:5173 and log in with the `ADMIN_EMAIL` / `ADMIN_PASSWORD` you put in `backend/.env`.
 
-Contact
-Craftoraa was developed by Haneen Imam as a graduation project.
-For inquiries or collaborations:
-        LinkedIn: linkedin.com/in/haneenimam
-        Email: haneenimam99@gmail.com
+---
+
+## Environment variables
+
+**`backend/.env`**
+
+| Variable | Required | What it is |
+|---|---|---|
+| `MONGO_URI` | yes | MongoDB connection string, e.g. `mongodb://localhost:27017/craftora` |
+| `JWT_SECRET` | yes | Any long random string used to sign logins |
+| `STRIPE_SECRET_KEY` | yes | Stripe secret key (`sk_test_...`). Any placeholder lets the server start; only card checkout needs a real key |
+| `PORT` | no | Defaults to `5000` |
+| `FRONTEND_URL` | when hosted | The live website address (no trailing `/`). Allows it through CORS and is where Stripe sends customers back |
+| `EMAIL_USER`, `EMAIL_PASS` | for email | Gmail address + [app password](https://support.google.com/accounts/answer/185833), used for password reset and the contact form |
+| `CONTACT_EMAIL` | no | Where contact-form messages go (defaults to `EMAIL_USER`) |
+| `STRIPE_WEBHOOK_SECRET` | no | Only needed if you register a Stripe webhook |
+| `ADMIN_EMAIL`, `ADMIN_PASSWORD` | for seeding | The admin account `npm run seed` creates |
+
+**`frontend/.env`**
+
+| Variable | What it is |
+|---|---|
+| `VITE_API_BASE_URL` | Backend address without `/api`, e.g. `http://localhost:5000` |
+
+> Public sign-up always creates a normal **User**. The first **Admin** comes from `npm run seed`; after that, admins can create Sellers and Admins from the dashboard.
+
+---
+
+## Hosting notes
+
+- **Backend:** an always-on Node.js server. Run `npm install` then `npm start` in `backend/`, set the variables above (including `FRONTEND_URL`), and use `GET /health` as the health check — it returns `503` if the database is unreachable.
+- **Frontend:** a static site. Set `VITE_API_BASE_URL` to the backend's address **before** running `npm run build`, then serve `frontend/dist/`. Every route must fall back to `index.html` (`public/_redirects` provides this rule for hosts that read that file).
+- **Database:** if you use MongoDB Atlas, allow the backend's IP address under *Network Access*.
+
+---
+
+## API overview
+
+| Method | Endpoint | Access |
+|---|---|---|
+| POST | `/api/auth/register` · `/api/auth/login` | Public |
+| GET | `/api/auth/verify` | Logged in |
+| POST | `/api/auth/forgot-password` · `/api/auth/reset-password` | Public |
+| POST | `/api/auth/admin/register` | Admin |
+| GET | `/api/products` (filters: `category`, `search`, `minPrice`, `maxPrice`, `page`, `limit`) · `/api/products/:id` | Public |
+| GET | `/api/products/my-products` | Seller |
+| POST / PUT / DELETE | `/api/products` · `/api/products/:id` | Admin, Seller (own products) |
+| POST | `/api/orders` | Public |
+| GET | `/api/orders/all` · PATCH `/api/orders/:id/status` | Admin, Seller |
+| GET / PATCH / DELETE | `/api/admin/users` · `/api/admin/users/:id` | Admin |
+| POST | `/api/payment/create-checkout-session` | Public |
+| POST | `/api/contact` | Public |
+| GET | `/health` | Public |
+
+---
+
+## Contact
+
+Craftora was developed by Haneen Imam as a graduation project.
+
+- LinkedIn: [linkedin.com/in/haneenimam](https://linkedin.com/in/haneenimam)
+- Email: haneenimam99@gmail.com

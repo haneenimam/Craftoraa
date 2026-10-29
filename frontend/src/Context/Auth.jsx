@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 
 
 const AuthContext = createContext();
@@ -31,10 +31,12 @@ export const AuthProvider = ({ children }) => {
 
 
  
-  const logout = () => {
+  // Clears the token too, otherwise protected pages stay reachable after logout
+  const logout = useCallback(() => {
     localStorage.removeItem("loggedInUser");
+    localStorage.removeItem("token");
     setUser(null);
-  };
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>

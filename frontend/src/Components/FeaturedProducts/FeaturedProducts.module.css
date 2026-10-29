@@ -144,12 +144,17 @@
 
 .product-title {
   font-weight: 600;
-  font-size: 27px; 
+  font-size: 20px;
   color: #093866;
   margin: 10px 0 2px;
-  white-space: nowrap;
+  /* The card centres its children, so cap the width or the text spills out of the card */
+  max-width: 100%;
+  /* Up to two lines, then "…" */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
   font-family: 'Josefin Sans', 'Overpass', sans-serif;
 }
 

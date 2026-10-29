@@ -2,10 +2,11 @@
 import { Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useAuth } from "../Context/Auth";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const [status, setStatus] = useState("loading");
-  const [hasAccess, setHasAccess] = useState(false);
+  const { logout } = useAuth();
 
   useEffect(() => {
     const verify = async () => {
@@ -16,32 +17,34 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
       }
 
       try {
-const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/auth/verify`, {
-  headers: { Authorization: `Bearer ${token}` },
-});
-      console.log("Response from /verify:", res.data); 
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/auth/verify`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-const userRole = res.data.user.role;
-      console.log("Extracted user role:", userRole); 
-      console.log("Allowed roles:", allowedRoles); 
-        if (!allowedRoles.includes(userRole)) {
-          setStatus("unauthorized");
+        const userRole = res.data.user.role;
+        setStatus(allowedRoles.includes(userRole) ? "authorized" : "unauthorized");
+      } catch (err) {
+        // Expired or invalid token: clear the stale session and send the user to login
+        if (err.response?.status === 401 || err.response?.status === 403) {
+          logout();
+          setStatus("unauthenticated");
         } else {
-          setHasAccess(true);
-          setStatus("authorized");
+          setStatus("error");
         }
-      } catch {
-        setStatus("unauthenticated");
       }
     };
 
     verify();
-  }, [allowedRoles]);
+  }, [allowedRoles, logout]);
 
   if (status === "loading") return <div>Loading...</div>;
   if (status === "unauthorized") return <Navigate to="/unauthorized" />;
+  if (status === "unauthenticated") return <Navigate to="/login" replace />;
+  if (status === "error") {
+    return <div className="text-center mt-5">Could not reach the server. Please try again.</div>;
+  }
 
-  return hasAccess ? children : null;
+  return children;
 };
 
 export default ProtectedRoute;

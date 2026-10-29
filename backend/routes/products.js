@@ -26,9 +26,10 @@ router.get('/', async (req, res) => {
       if (maxPrice) query.price.$lte = Number(maxPrice);
     }
 
-    // Simple search by name
+    // Simple search by name (escaped so characters like "(" can't break the regex)
     if (search) {
-      query.name = { $regex: search, $options: 'i' };
+      const pattern = { $regex: search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), $options: 'i' };
+      query.$or = [{ name: pattern }, { title: pattern }];
     }
 
     const parsedLimit = parseInt(limit);
@@ -50,6 +51,16 @@ router.get('/', async (req, res) => {
   } catch (err) {
     console.error('Error in GET /api/products:', err);
     res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get seller's products (must stay above '/:id' or that route catches it)
+router.get('/my-products', auth, roleCheck(['Seller']), async (req, res) => {
+  try {
+    const products = await Product.find({ seller: req.user.id });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -106,6 +117,9 @@ router.put('/:id', auth, roleCheck(['Admin', 'Seller']), async (req, res) => {
         updatedData,
         { new: true }
       );
+      if (!product) {
+        return res.status(403).json({ error: 'You can only edit your own products' });
+      }
     }
 
     res.json(product);
@@ -114,24 +128,6 @@ router.put('/:id', auth, roleCheck(['Admin', 'Seller']), async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
-
-
-
-// Get seller's products
-router.get('/my-products', auth, roleCheck(['Seller']), async (req, res) => {
-  try {
-    const products = await Product.find({ seller: req.user.id });
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
-
-
-
-
 
 // Delete product (admin can delete any, seller can delete their own)
 router.delete('/:id', auth, roleCheck(['Admin', 'Seller']), async (req, res) => {

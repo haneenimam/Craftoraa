@@ -153,6 +153,31 @@ const Navbar = () => {
     setDashboardDropdownOpen(false);
   };
 
+  // Shared by the desktop dropdown and the mobile menu
+  const dashboardLinks = [
+    { to: "/admin/create-user", en: "Create Admin/Seller", ar: "إنشاء مستخدم بصلاحيات", roles: ["admin"] },
+    { to: "/dashboard", en: "Main", ar: "الرئيسية", roles: ["admin"] },
+    { to: "/dashboard/manage-users", en: "Manage Users", ar: "إدارة المستخدمين", roles: ["admin"] },
+    { to: "/dashboard/edit-products", en: "Edit Products", ar: "تعديل المنتجات", roles: ["admin", "seller"] },
+    { to: "/dashboard/orders", en: "Orders", ar: "الطلبات", roles: ["admin", "seller"] },
+    { to: "/dashboard/products", en: "Admin Products", ar: "إدارة المنتجات", roles: ["admin"] },
+  ];
+
+  const renderDashboardLinks = () =>
+    dashboardLinks
+      .filter((link) => link.roles.includes(user?.role))
+      .map((link) => (
+        <li key={link.to}>
+          <Link
+            to={link.to}
+            className={`dropdown-item ${styles.dashboardDropdownItem}`}
+            onClick={handleDashboardLinkClick}
+          >
+            {language === "ar" ? link.ar : link.en}
+          </Link>
+        </li>
+      ));
+
   return (
     <header className={styles.mainNavbar}>
       {/* Top Navbar */}
@@ -282,84 +307,7 @@ const Navbar = () => {
                     className={`dropdown-menu ${styles.dashboardDropdown} ${dashboardDropdownOpen ? "show" : ""
                       }`}
                   >
-                    {user.role === "admin" && (
-                      <>
-                        <li>
-                          <Link
-                            to="/admin/create-user"
-                            className={`dropdown-item ${styles.dashboardDropdownItem}`}
-                            onClick={handleDashboardLinkClick}
-                          >
-                            {language === "ar" ? "إنشاء مستخدم بصلاحيات" : "Create Admin/Seller"}
-                          </Link>
-                        </li>
-
-                        <li>
-                          <Link
-                            to="/dashboard"
-                            className={`dropdown-item ${styles.dashboardDropdownItem}`}
-                            onClick={handleDashboardLinkClick}
-                          >
-                            {language === "ar" ? "الرئيسية" : "Main"}
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            to="/dashboard/manage-users"
-                            className={`dropdown-item ${styles.dashboardDropdownItem}`}
-                            onClick={handleDashboardLinkClick}
-                          >
-                            {language === "ar"
-                              ? "إدارة المستخدمين"
-                              : "Manage Users"}
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            to="/dashboard/edit-products"
-                            className={`dropdown-item ${styles.dashboardDropdownItem}`}
-                            onClick={handleDashboardLinkClick}
-                          >
-                            {language === "ar"
-                              ? "تعديل المنتجات"
-                              : "Edit Products"}
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            to="/dashboard/orders"
-                            className={`dropdown-item ${styles.dashboardDropdownItem}`}
-                            onClick={handleDashboardLinkClick}
-                          >
-                            {language === "ar" ? "الطلبات" : "Orders"}
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            to="/dashboard/products"
-                            className={`dropdown-item ${styles.dashboardDropdownItem}`}
-                            onClick={handleDashboardLinkClick}
-                          >
-                            {language === "ar"
-                              ? "إدارة المنتجات"
-                              : "Admin Products"}
-                          </Link>
-                        </li>
-                      </>
-                    )}
-                    {user.role === "seller" && (
-                      <li>
-                        <Link
-                          to="/dashboard/edit-products"
-                          className={`dropdown-item ${styles.dashboardDropdownItem}`}
-                          onClick={handleDashboardLinkClick}
-                        >
-                          {language === "ar"
-                            ? "تعديل المنتجات"
-                            : "Edit Products"}
-                        </Link>
-                      </li>
-                    )}
+                    {renderDashboardLinks()}
                   </ul>
                 </div>
               )}
@@ -444,7 +392,7 @@ const Navbar = () => {
                       className={`dropdown-menu ${styles.dashboardDropdown} ${dashboardDropdownOpen ? "show" : ""
                         }`}
                     >
-                      {/* Same logic for admin/seller here */}
+                      {renderDashboardLinks()}
                     </ul>
                   </li>
                 )}

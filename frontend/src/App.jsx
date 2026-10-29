@@ -82,7 +82,7 @@ const App = () => {
 
           {/* Protected Routes */}
           <Route path="/dashboard" element={
-            <ProtectedRoute allowedRoles={["Admin", "Seller", "Buyer"]}>
+            <ProtectedRoute allowedRoles={["Admin"]}>
               <LayoutWithNavbarFooter Component={Dashboard} />
             </ProtectedRoute>
           } />

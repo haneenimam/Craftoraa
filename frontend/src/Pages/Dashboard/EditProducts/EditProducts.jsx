@@ -7,8 +7,8 @@ const categories = [
   { key: "Jewelry", image: "jewelry.jpeg" },
   { key: "Crochet", image: "crochet.jpeg" },
   { key: "Candles", image: "candles.jpeg" },
-  { key: "Ceramic", image: "ceramic.jpeg" },
-  { key: "Home essential", image: "homeess.jpeg" },
+  { key: "Ceramics", image: "ceramic.jpeg" },
+  { key: "Home Essential", image: "homeess.jpeg" },
 ];
 
 function ProductsPage() {

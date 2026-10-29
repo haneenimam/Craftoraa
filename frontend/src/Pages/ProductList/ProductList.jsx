@@ -2,18 +2,35 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../../Apis/config";
 import ProductCard from "../../Components/ProductCard/ProductCard";
 import styles from "./ProductList.module.css";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import ReactSlider from "react-slider";
 import { useLanguage } from "../../Context/LanguageContext";
 
+// `value` is what the backend stores; labels are only for display
+const categories = [
+  { value: "", en: "All Products", ar: "كل المنتجات" },
+  { value: "Jewelry", en: "Jewelry", ar: "إكسسوارات" },
+  { value: "Candles", en: "Candles", ar: "شموع" },
+  { value: "Crochet", en: "Crochet", ar: "كروشيه" },
+  { value: "Ceramics", en: "Ceramics", ar: "سيراميك" },
+  { value: "Home Essential", en: "Home Essential", ar: "الاحتياجات المنزلية" },
+];
+
+// Older saved links may contain a display label instead of the value
+const toCategoryValue = (category) => {
+  const match = categories.find(
+    (c) => c.value === category || c.en === category || c.ar === category
+  );
+  return match ? match.value : category;
+};
+
 const ProductList = () => {
   const location = useLocation();
-  const navigate = useNavigate();
   const { language } = useLanguage();
   const isArabic = language === "ar";
 
   const params = new URLSearchParams(location.search);
-  const initialCategory = params.get("category") || "";
+  const initialCategory = toCategoryValue(params.get("category") || "");
   const initialSearch = params.get("search") || "";
   const initialMinPrice = parseInt(params.get("minPrice")) || 0;
   const initialMaxPrice = parseInt(params.get("maxPrice")) || 2000;
@@ -30,9 +47,11 @@ const ProductList = () => {
   const [search, setSearch] = useState(initialSearch);
   const [debouncedSearch, setDebouncedSearch] = useState(initialSearch);
 
-  const categories = isArabic
-    ? ["كل المنتجات", "إكسسوارات", "شموع", "كروشيه", "سيراميك", "الاحتياجات المنزلية"]
-    : ["All Products", "Jewelry", "Candles", "Crochet", "Ceramics", "Home Essential"];
+  const categoryLabel = (value) => {
+    const match = categories.find((c) => c.value === value);
+    if (!match) return value;
+    return isArabic ? match.ar : match.en;
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -45,7 +64,7 @@ const ProductList = () => {
     setLoading(true);
     const params = {
       page,
-      ...(category && category !== (isArabic ? "كل المنتجات" : "All Products") && { category }),
+      ...(category && { category }),
       minPrice: priceRange[0],
       maxPrice: priceRange[1],
       ...(debouncedSearch && { search: debouncedSearch }),
@@ -117,18 +136,18 @@ const ProductList = () => {
             tabIndex={0}
             onBlur={() => setOpen(false)}
           >
-            <span>{category || (isArabic ? "كل المنتجات" : "All Products")}</span>
+            <span>{categoryLabel(category)}</span>
             <ul className={`${styles.dropdownMenu} ${open ? styles.show : ""}`}>
               {categories.map((option) => (
                 <li
-                  key={option}
-                  className={`${styles.dropdownOption} ${category === option ? styles.active : ""}`}
+                  key={option.value || "all"}
+                  className={`${styles.dropdownOption} ${category === option.value ? styles.active : ""}`}
                   onClick={() => {
-                    setCategory(option);
+                    setCategory(option.value);
                     setOpen(false);
                   }}
                 >
-                  {option}
+                  {isArabic ? option.ar : option.en}
                 </li>
               ))}
             </ul>

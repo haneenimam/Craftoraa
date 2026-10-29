@@ -68,15 +68,22 @@ function AdminView() {
   const handleEdit = (product) => {
     setEditId(product._id);
     setEditData({
-      title: product.title || "",
+      title: product.title || product.name || "",
       price: product.price || "",
       category: product.category || "",
     });
   };
 
   const handleSave = (id) => {
+    const token = localStorage.getItem("token");
+
     axiosInstance
-      .put(`/api/products/${id}`, editData)
+      // Product pages show `name`, so keep it in sync with the edited title
+      .put(`/api/products/${id}`, { ...editData, name: editData.title }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((res) => {
         setProducts((prev) =>
           prev.map((product) => (product._id === id ? res.data : product))
@@ -159,7 +166,7 @@ function AdminView() {
                 </>
               ) : (
                 <>
-                  <td className={styles.tableCell}>{product.title}</td>
+                  <td className={styles.tableCell}>{product.title || product.name}</td>
                   <td className={styles.tableCell}>{product.price}</td>
                   <td className={styles.tableCell}>{product.category}</td>
                 </>
@@ -216,6 +223,7 @@ function AdminView() {
         <button
           className={`btn btn-outline-primary ${styles.pageButton}`}
           onClick={() => setPage((prev) => prev + 1)}
+          disabled={products.length < 20}
         >
           Next
         </button>

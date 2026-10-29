@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const path = require('path');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 // Verify essential env variables
@@ -41,32 +40,7 @@ const connectDB = async (retries = 5) => {
   process.exit(1);
 };
 
-app.use(express.json({ limit: '10kb' }));
-app.use(express.static(path.join(__dirname, 'public')));
-
-// CORS
-const allowedOrigins = [
-  'http://localhost:3000',
-  'http://localhost:5173',
-  'https://craftoraa.netlify.app',
-  'https://ecommerce-backend3-31p8.vercel.app',
-  'https://craftoraaa.netlify.app',
-];
-
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
-};
-
-app.use(cors(corsOptions));
-
+// Stripe webhook needs the raw body, so it must be registered before express.json()
 app.post('/api/payment/webhook', express.raw({ type: 'application/json' }), (req, res) => {
   const sig = req.headers['stripe-signature'];
   let event;
@@ -85,6 +59,36 @@ app.post('/api/payment/webhook', express.raw({ type: 'application/json' }), (req
   console.log(`Stripe Event: ${event.type}`);
   res.json({ received: true });
 });
+
+app.use(express.json({ limit: '10kb' }));
+
+// CORS
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'https://craftoraa.netlify.app',
+  'https://ecommerce-backend3-31p8.vercel.app',
+  'https://craftoraaa.netlify.app',
+];
+
+// Live frontend address, e.g. https://craftora.example.com
+if (process.env.FRONTEND_URL) {
+  allowedOrigins.push(process.env.FRONTEND_URL.replace(/\/$/, ''));
+}
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
+};
+
+app.use(cors(corsOptions));
 
 // Timeout handler
 app.use((req, res, next) => {
@@ -114,10 +118,6 @@ app.use('/api/admin', loadRoute('./routes/admin'));
 app.use('/api/payment', loadRoute('./routes/payment'));
 app.use('/api/contact', loadRoute('./routes/contact'));
 
-app.get('/test-payment', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'test-payment.html'));
-});
-
 // Health checks
 app.get('/', (req, res) => {
   res.status(200).json({
@@ -128,11 +128,18 @@ app.get('/', (req, res) => {
 });
 
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'healthy' });
+  const dbConnected = mongoose.connection.readyState === 1;
+  res.status(dbConnected ? 200 : 503).json({
+    status: dbConnected ? 'healthy' : 'unhealthy',
+    database: dbConnected ? 'connected' : 'disconnected'
+  });
 });
 
 // Final error handler
 app.use((err, req, res, next) => {
+  if (err.message === 'Not allowed by CORS') {
+    return res.status(403).json({ status: 'error', message: 'Origin not allowed' });
+  }
   console.error(`[${new Date().toISOString()}]`, err.stack);
   res.status(500).json({ status: 'error', message: 'Internal server error' });
 });
@@ -144,7 +151,6 @@ connectDB().then(() => {
     console.log('Available endpoints:');
     console.log('GET    /');
     console.log('GET    /health');
-    console.log('GET    /test-payment');
     console.log('POST   /api/auth/register');
     console.log('POST   /api/auth/login');
     console.log('POST   /api/auth/forgot-password');
@@ -153,9 +159,8 @@ connectDB().then(() => {
     console.log('POST   /api/cart');
     console.log('POST   /api/orders');
     console.log('GET    /api/admin/users');
-    console.log('POST   /api/payment/create-payment-intent');
+    console.log('POST   /api/payment/create-checkout-session');
     console.log('POST   /api/payment/webhook');
     console.log('POST   /api/contact');
-    console.log(`\n Test page: http://localhost:${PORT}/test-payment`);
   });
 });

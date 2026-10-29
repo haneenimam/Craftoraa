@@ -164,8 +164,9 @@ function ManageUsers() {
                         onChange={handleInputChange}
                         className={`form-select ${styles["form-select"]}`}
                       >
-                        <option value="user">User</option>
-                        <option value="admin">Admin</option>
+                        <option value="User">User</option>
+                        <option value="Seller">Seller</option>
+                        <option value="Admin">Admin</option>
                       </select>
                     ) : (
                       user.role

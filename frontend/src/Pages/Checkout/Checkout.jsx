@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useCart } from "../../Context/CartContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useLanguage } from "../../Context/LanguageContext";
 import styles from "./Checkout.module.css";
 import axios from "axios";
@@ -42,6 +42,38 @@ const { cart, updateQuantity, removeFromCart, clearCart } = useCart();
   const { language } = useLanguage();
   const currency = language === "ar" ? "ج.م" : "EGP";
   const t = (en, ar) => (language === "ar" ? ar : en);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Back from Stripe: save the paid order, or tell the customer the cart was kept.
+  // pendingOrder is removed straight away so a refresh can't save the order twice.
+  useEffect(() => {
+    const payment = searchParams.get("payment");
+    if (!payment) return;
+
+    const pendingOrder = localStorage.getItem("pendingOrder");
+    localStorage.removeItem("pendingOrder");
+    setSearchParams({}, { replace: true });
+
+    if (payment === "success" && pendingOrder) {
+      localStorage.removeItem("backupCart");
+      axios
+        .post(`${import.meta.env.VITE_API_BASE_URL}/api/orders`, JSON.parse(pendingOrder))
+        .then(() => {
+          alert(t("Payment successful! Your order has been placed.", "تم الدفع بنجاح! تم تنفيذ طلبك."));
+          navigate("/");
+        })
+        .catch(() => {
+          alert(t(
+            "Payment received, but we couldn't save your order. Please contact us.",
+            "تم الدفع، لكن تعذر حفظ طلبك. يرجى التواصل معنا."
+          ));
+        });
+    } else if (payment === "cancelled" && pendingOrder) {
+      alert(t("Payment was cancelled. Your cart has been kept.", "تم إلغاء الدفع. تم الاحتفاظ بعربة التسوق."));
+    }
+    // Runs once on arrival from Stripe; the other values are stable for that visit
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const increaseQuantity = (productId) => {
     const item = cart.find((item) => (item._id || item.id) === productId);
@@ -238,27 +270,24 @@ const { cart, updateQuantity, removeFromCart, clearCart } = useCart();
         alert(t("Order placed successfully!", "تم تنفيذ الطلب بنجاح!"));
         navigate("/");
       } else if (form.paymentMethod === "Card") {
+        // The backend looks up names and prices itself
         const payload = {
           items: cart.map((item) => ({
-            title: item.title,
-            price: item.price,
+            product: item._id || item.id,
             quantity: item.quantity,
           })),
-          email: form.email,
-          totalPrice: parseFloat(totalPrice.toFixed(2)),
         };
-    
-        console.log("Sending card payment payload:", payload);
-    
+
         const response = await axios.post(
           `${import.meta.env.VITE_API_BASE_URL}/api/payment/create-checkout-session`,
           payload
         );
-    
+
         if (response.data?.url) {
-          // ✅ Backup the cart in case user returns without completing payment
+          // ✅ Keep the cart (restored if payment is cancelled) and the order (saved if paid)
           localStorage.setItem("backupCart", JSON.stringify(cart));
-    
+          localStorage.setItem("pendingOrder", JSON.stringify(orderData));
+
           // ✅ Temporarily clear the cart before redirecting to Stripe
           clearCart();
     

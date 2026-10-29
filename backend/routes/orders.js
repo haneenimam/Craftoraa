@@ -8,7 +8,7 @@ const Product = require('../models/Product');
 // Guest or Authenticated: Create order (from frontend data)
 router.post('/', async (req, res) => {
   try {
-    const { items, user, shippingInfo, paymentMethod, cardNumber, cardName, expiry, cvv } = req.body;
+    const { items, user, shippingInfo, paymentMethod } = req.body;
 
     if (!items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ error: 'Order must contain items' });
@@ -17,21 +17,29 @@ router.post('/', async (req, res) => {
     let totalPrice = 0;
     const orderItems = [];
 
+    // Validate every item first so a rejected order never changes stock
     for (const item of items) {
-      const product = await Product.findById(item.product);
-      if (!product) return res.status(404).json({ error: 'Product not found' });
-      if (product.stock < item.quantity) {
-        return res.status(400).json({ error: `${product.name} has insufficient stock` });
+      const quantity = Number(item.quantity);
+      if (!Number.isInteger(quantity) || quantity < 1) {
+        return res.status(400).json({ error: 'Invalid item quantity' });
       }
 
-      totalPrice += product.price * item.quantity;
+      const product = await Product.findById(item.product);
+      if (!product) return res.status(404).json({ error: 'Product not found' });
+      if (product.stock < quantity) {
+        return res.status(400).json({ error: `${product.name || product.title} has insufficient stock` });
+      }
+
+      totalPrice += product.price * quantity;
       orderItems.push({
         product: product._id,
-        quantity: item.quantity,
+        quantity,
         price: product.price,
       });
+    }
 
-      await Product.findByIdAndUpdate(product._id, { $inc: { stock: -item.quantity } });
+    for (const item of orderItems) {
+      await Product.findByIdAndUpdate(item.product, { $inc: { stock: -item.quantity } });
     }
 
     const newOrder = new Order({
@@ -40,10 +48,6 @@ router.post('/', async (req, res) => {
       totalPrice,
       shippingInfo: shippingInfo || {},
       paymentMethod,
-      cardNumber,
-      cardName,
-      expiry,
-      cvv,
       status: 'processing',
     });
 
@@ -78,7 +82,7 @@ router.get('/all', auth, roleCheck(['Admin', 'Seller']), async (req, res) => {
     }
 
     const orders = await Order.find(query)
-      .populate('user', 'name email')
+      .populate('user', 'firstName lastName email')
       .populate('items.product')
       .sort({ createdAt: -1 });
 

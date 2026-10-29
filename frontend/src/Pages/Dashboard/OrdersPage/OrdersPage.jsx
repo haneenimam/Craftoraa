@@ -50,7 +50,7 @@ function OrdersPage() {
             {orders.length > 0 ? (
               orders.map((order, index) =>
                 order.items.map((item, itemIndex) => (
-                  <tr key={`${order._id}-${item.product._id}`}>
+                  <tr key={`${order._id}-${itemIndex}`}>
                     <td data-label="#">
                       {index + 1}
                       {itemIndex > 0 ? `.${itemIndex + 1}` : ""}
@@ -58,7 +58,7 @@ function OrdersPage() {
                     <td data-label="Product">
                       {item.product ? (
                         <span className={styles.productName}>
-                          {item.product.name}
+                          {item.product.name || item.product.title}
                         </span>
                       ) : (
                         <span className="text-muted fst-italic">

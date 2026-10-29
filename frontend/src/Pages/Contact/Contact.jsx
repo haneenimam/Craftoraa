@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './Contact.module.css';
 import { useLanguage } from '../../Context/LanguageContext';
+import axiosInstance from '../../Apis/config';
 
 const Contact = () => {
   const { language } = useLanguage();
@@ -8,6 +9,7 @@ const Contact = () => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [errors, setErrors] = useState({});
   const [isFormValid, setIsFormValid] = useState(false);
+  const [sending, setSending] = useState(false);
 
   const nameRef = useRef(null);
   const emailRef = useRef(null);
@@ -16,7 +18,7 @@ const Contact = () => {
   const validate = (data) => {
     const newErrors = {};
 
-    if (data.name.trim() !== '' && !/^[A-Za-zÀ-ÖØ-öø-ÿ\s]{2,}$/.test(data.name.trim())) {
+    if (data.name.trim() !== '' && !/^[A-Za-zÀ-ÖØ-öø-ÿ؀-ۿ\s]{2,}$/.test(data.name.trim())) {
       newErrors.name = language === 'ar'
         ? 'يجب أن يحتوي الاسم على حرفين على الأقل ويتكون من حروف ومسافات فقط.'
         : 'Name must be at least 2 letters and contain only letters and spaces.';
@@ -63,7 +65,7 @@ const Contact = () => {
     setErrors(validationErrors);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const validationErrors = validate(formData);
@@ -75,10 +77,24 @@ const Contact = () => {
       formData.email.trim() !== '' &&
       formData.message.trim() !== ''
     ) {
-      alert(language === 'ar' ? 'تم إرسال الرسالة بنجاح!' : 'Message sent successfully!');
-      setFormData({ name: '', email: '', message: '' });
-      setErrors({});
-      setIsFormValid(false);
+      setSending(true);
+      try {
+        await axiosInstance.post('/api/contact', {
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          message: formData.message.trim(),
+        });
+        alert(language === 'ar' ? 'تم إرسال الرسالة بنجاح!' : 'Message sent successfully!');
+        setFormData({ name: '', email: '', message: '' });
+        setErrors({});
+        setIsFormValid(false);
+      } catch {
+        alert(language === 'ar'
+          ? 'تعذر إرسال الرسالة. حاول مرة أخرى لاحقًا.'
+          : 'Could not send your message. Please try again later.');
+      } finally {
+        setSending(false);
+      }
     } else {
       if (validationErrors.name) {
         nameRef.current?.focus();
@@ -166,8 +182,10 @@ const Contact = () => {
               : `${formData.message.length} / 200 characters`}
           </p>
         </div>
-        <button type="submit" disabled={!isFormValid}>
-          {language === 'ar' ? 'إرسال' : 'Send'}
+        <button type="submit" disabled={!isFormValid || sending}>
+          {sending
+            ? (language === 'ar' ? 'جارٍ الإرسال...' : 'Sending...')
+            : (language === 'ar' ? 'إرسال' : 'Send')}
         </button>
       </form>
     </div>

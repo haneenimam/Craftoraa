@@ -26,7 +26,7 @@ const ProductCard = ({ product, page }) => {
     stockColor = "#ffc107"; 
   }
 
-  const titleFirstWord = product.title?.split(" ")[0] || (isArabic ? "منتج" : "Product");
+  const displayTitle = product.title || product.name || (isArabic ? "منتج" : "Product");
   const imgSrc =
     product.image || product.images?.[0] || product.thumbnail || "/default-product.jpg";
 
@@ -63,7 +63,7 @@ const ProductCard = ({ product, page }) => {
       />
 
       <div className={styles.details}>
-        <h3 className={styles.title}>{titleFirstWord}</h3>
+        <h3 className={styles.title} title={displayTitle}>{displayTitle}</h3>
 
         <div className={styles.priceContainer}>
           {isArabic ? (

@@ -79,8 +79,9 @@ const FeaturedProduct = () => {
       <div className={styles["product-list"]}>
         {products.map((product) => {
           const id = product.id || product._id;
-          const titleFirstWord =
-            product.title?.split(" ")[0] ||
+          const displayTitle =
+            product.title ||
+            product.name ||
             (language === "ar" ? "منتج" : "Product");
           const imgSrc =
             product.image ||
@@ -125,7 +126,9 @@ const FeaturedProduct = () => {
                   </button>
                 </div>
               </div>
-              <p className={styles["product-title"]}>{titleFirstWord}</p>
+              <p className={styles["product-title"]} title={displayTitle}>
+                {displayTitle}
+              </p>
               <div className={styles.priceContainer}>
                 <p className={styles["product-price"]}>
                   {language === "ar" ? (

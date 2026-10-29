@@ -16,10 +16,12 @@ export const CartProvider = ({ children }) => {
   }, [cart]);
 
   // ✅ Restore cart from backup if user was redirected back without completing payment
+  // (a successful payment is handled by the checkout page, so the cart stays empty)
   useEffect(() => {
     const backup = localStorage.getItem("backupCart");
+    const paid = new URLSearchParams(window.location.search).get("payment") === "success";
 
-    if (backup && cart.length === 0) {
+    if (backup && !paid && cart.length === 0) {
       setCart(JSON.parse(backup));
       localStorage.removeItem("backupCart");
     }

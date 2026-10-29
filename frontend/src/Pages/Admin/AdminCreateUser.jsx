@@ -1,13 +1,9 @@
 // src/Pages/Admin/AdminCreateUser.jsx
-import ProtectedRoute from "../../Components/ProtectedRoute";
+// Access is already restricted to Admins by the route in App.jsx
 import AdminCreateUserForm from "./AdminCreateUserForm";
 
 const AdminCreateUser = () => {
-  return (
-    <ProtectedRoute allowedRoles={["Admin"]}>
-      <AdminCreateUserForm />
-    </ProtectedRoute>
-  );
+  return <AdminCreateUserForm />;
 };
 
 export default AdminCreateUser;

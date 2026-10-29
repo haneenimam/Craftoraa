@@ -53,7 +53,6 @@ function Signup() {
         return;
       }
 
-      localStorage.setItem("loggedInUser", JSON.stringify(data.user));
       navigate("/login");
     } catch {
       alert("Something went wrong. Please try again.");

@@ -10,30 +10,31 @@ router.post('/', async (req, res) => {
   }
 
   try {
+    // Same Gmail account as the password-reset emails
     const transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
-      port: process.env.MAIL_PORT,
-      secure: false,
+      service: 'gmail',
       auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
       }
     });
 
+    // Gmail only sends "from" the signed-in account, so the visitor goes in replyTo
     const mailOptions = {
-      from: `"${name}" <${email}>`,
-      to: 'haneenimam99@gmail.com',
+      from: process.env.EMAIL_USER,
+      replyTo: `"${name}" <${email}>`,
+      to: process.env.CONTACT_EMAIL || process.env.EMAIL_USER,
       subject: `New message from ${name}`,
       text: `From: ${name}\nEmail: ${email}\n\n${message}`
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log('Message sent:', info.messageId); // ⬅ أضف دي
+    console.log('Message sent:', info.messageId);
 
     res.status(200).json({ message: 'Message sent successfully.' });
 
   } catch (error) {
-    console.error('Email send error:', error); // ⬅ دي بتطبع الخطأ
+    console.error('Email send error:', error);
     res.status(500).json({ message: 'Failed to send message.' });
   }
 });

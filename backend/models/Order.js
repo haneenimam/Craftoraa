@@ -19,10 +19,6 @@ const orderSchema = new mongoose.Schema({
     country: String,
   },
   paymentMethod: String,
-  cardNumber: String,
-  cardName: String,
-  expiry: String,
-  cvv: String,
   items: [
     {
       product: {

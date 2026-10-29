@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../../Apis/config";
 import { useCart } from "../../Context/CartContext";
 import { useLanguage } from "../../Context/LanguageContext"; 
@@ -7,7 +7,6 @@ import styles from "./ProductDetails.module.css";
 
 const ProductDetails = () => {
   const { id } = useParams();
-  const location = useLocation();
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { language } = useLanguage();
@@ -16,8 +15,6 @@ const ProductDetails = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
-
-  const page = new URLSearchParams(location.search).get("page") || 1;
 
   useEffect(() => {
     setLoading(true);
@@ -84,17 +81,17 @@ const ProductDetails = () => {
               product.thumbnail ||
               product.img ||
               product.images?.[0] ||
-              "https://via.placeholder.com/400"
+              "/default-product.jpg"
             }
             alt={product.title || "Product"}
             className="img-fluid"
-            onError={(e) => (e.target.src = "https://via.placeholder.com/400")}
+            onError={(e) => (e.target.src = "/default-product.jpg")}
           />
         </div>
 
         <div className={`${styles["product-info"]} col-md-6`}>
           <h2 className={styles["product-title"]}>
-            {product.name || (language === "ar" ? "منتج بدون اسم" : "Unnamed Product")}
+            {product.name || product.title || (language === "ar" ? "منتج بدون اسم" : "Unnamed Product")}
           </h2>
 
           <div className={styles.priceContainer}>

@@ -83,9 +83,12 @@
 
 .title {
   padding-left: 10px;
-  font-size: 27px; 
+  font-size: 22px;
   color: #093866;
-  margin-bottom: 3px; 
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .priceContainer {
