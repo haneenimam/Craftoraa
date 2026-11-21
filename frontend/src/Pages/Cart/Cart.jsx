@@ -2,6 +2,7 @@ import React from "react";
 import { useCart } from "../../Context/CartContext";
 import { useLanguage } from "../../Context/LanguageContext";
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import { resolveImageUrl } from "../../Apis/images";
 import styles from "./CartPage.module.css";
 
 const CartPage = () => {
@@ -46,11 +47,12 @@ const CartPage = () => {
           <div className={styles.cartItems}>
             {cart.map((product) => {
               const productId = product._id || product.id;
-              const imgSrc =
+              const imgSrc = resolveImageUrl(
                 product.image ||
                 product.images?.[0] ||
                 product.thumbnail ||
-                "/default-product.jpg";
+                "/default-product.jpg"
+              );
               const stock = product.inStock ?? product.stock ?? product.quantity ?? Infinity;
 
               return (

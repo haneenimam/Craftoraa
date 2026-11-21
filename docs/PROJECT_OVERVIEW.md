@@ -82,6 +82,7 @@ Key points:
 | Database | MongoDB 8 (Atlas or self-hosted), Mongoose 8.15 |
 | Auth | jsonwebtoken 9 (HS256), bcryptjs 3 |
 | Payments | Stripe Node SDK 18.1 (Stripe Checkout) |
+| Image uploads | multer 2.5.0 (in-memory multipart parsing), image-size 2.0.4 (header validation) — both pinned to exact versions |
 | Email | Nodemailer 7 (Gmail) |
 | Config | dotenv 16.5 |
 | Dev tooling | nodemon (backend), ESLint 9 (frontend) |
@@ -104,7 +105,8 @@ Craftoraa/
 │   │   ├── User.js                Users and roles
 │   │   ├── Product.js             Products (flexible schema)
 │   │   ├── Order.js               Orders with price snapshot
-│   │   └── Cart.js                Server-side cart (API exists, UI does not use it)
+│   │   ├── Cart.js                Server-side cart (API exists, UI does not use it)
+│   │   └── ProductImage.js        Photos uploaded from the dashboard (bytes + type + size)
 │   ├── routes/
 │   │   ├── auth.js                Register, login, verify, admin-create, forgot/reset password
 │   │   ├── products.js            Product listing, details, CRUD, seller's products
@@ -112,7 +114,8 @@ Craftoraa/
 │   │   ├── admin.js               User management
 │   │   ├── payment.js             Stripe Checkout session
 │   │   ├── contact.js             Contact form email
-│   │   └── cart.js                Server-side cart endpoints (unused by UI)
+│   │   ├── cart.js                Server-side cart endpoints (unused by UI)
+│   │   └── images.js              Upload (Admin, Seller) and serve product photos
 │   ├── vercel.json                Configuration left over from the project's original hosting
 │   ├── .env.example               Template for backend/.env
 │   └── package.json               Scripts: start, dev, seed
@@ -126,6 +129,7 @@ Craftoraa/
         ├── main.jsx               Mounts <App/> inside Language → Cart → Auth providers; loads Bootstrap
         ├── App.jsx                All routes + layouts + ProtectedRoute wrappers
         ├── Apis/config.js         Axios instance using VITE_API_BASE_URL
+        ├── Apis/images.js         Image upload (resize in browser) + resolveImageUrl()
         ├── Context/
         │   ├── Auth.jsx           Logged-in user (login / logout)
         │   ├── CartContext.jsx    Cart in localStorage; restore after cancelled card payment
@@ -138,6 +142,7 @@ Craftoraa/
         │   ├── ShopByCategory/    Five category tiles
         │   ├── FeaturedProducts/  First 9 products, horizontal scroll
         │   ├── ProductCard/       Card used in product lists
+        │   ├── PaymentReturn/     Handles the return from Stripe (save order / restore cart)
         │   └── ScrollToTop/
         └── Pages/
             ├── Home/  ProductList/  CategoryProducts/  ProductDetails/
@@ -185,6 +190,16 @@ Craftoraa/
 - **Admins** can't delete their own account or remove their own Admin role (prevents lock-out). Roles are validated against `User` / `Seller` / `Admin`; duplicate emails are rejected with `400`.
 - Every async route is wrapped in `try/catch`, so a failure returns an error response instead of crashing the process.
 
+### Product image uploads
+
+Admins and sellers can upload a product photo from **Dashboard → Edit Products → Upload image**. The design follows the [OWASP File Upload Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html) and Google's guidance on [securely hosting user data](https://web.dev/articles/securely-hosting-user-data):
+
+1. **In the browser** (`frontend/src/Apis/images.js`): only JPG / PNG / WebP up to 15 MB are accepted. The photo is drawn onto a canvas at most **1200 px** on its longest side and re-encoded as WebP (or JPEG when the browser can't encode WebP — the result is checked, because browsers silently fall back to PNG). Re-encoding also **drops the original file's metadata**, such as a phone's GPS location.
+2. **Upload** (`POST /api/images`, Admin/Seller only): multer parses the request **in memory** (nothing touches the server's disk — serverless hosts don't keep files) with hard limits: one file, field `image`, no other fields, **max 2 MB** (well under the ~4.5 MB request cap of serverless hosts).
+3. **Validation**: the real type is detected from the file's **magic bytes** (the client's Content-Type and filename are ignored), then the image header is **parsed** with image-size and must agree with the magic bytes. Anything else — text, HTML, SVG, GIF, disguised or truncated files — is rejected with `415`. Images over **5000 px** on a side are rejected with `400`.
+4. **Storage**: the bytes go into the separate `productimages` collection under a server-generated id. Products only store the link `/api/images/<id>`, so product queries never load image data.
+5. **Serving** (`GET /api/images/:id`, public) with locked-down headers: the stored `Content-Type`, `X-Content-Type-Options: nosniff`, `Content-Security-Policy: default-src 'none'; sandbox`, `Content-Disposition: inline`, and `Cross-Origin-Resource-Policy: cross-origin` (required because the shop website is a different site from the API). Responses carry `Cache-Control: public, max-age=31536000, immutable` and an `ETag`, so browsers cache them and revalidation returns `304`.
+
 ---
 
 ## 6. Data model
@@ -196,6 +211,8 @@ erDiagram
     ORDER ||--|{ ORDER_ITEM : contains
     PRODUCT ||--o{ ORDER_ITEM : "referenced by"
     USER ||--o| CART : "has (unused by UI)"
+    USER ||--o{ PRODUCT_IMAGE : "uploads"
+    PRODUCT }o--o| PRODUCT_IMAGE : "image links to"
 ```
 
 ### User (`users`)
@@ -221,8 +238,8 @@ The schema is intentionally flexible (`strict: false`) because it was designed t
 | `price` | Number | EGP |
 | `category` | String | **Must be exactly** `Jewelry`, `Crochet`, `Ceramics`, `Candles` or `Home Essential` to appear in the category pages and filters |
 | `stock` | Number | Default 0; shown as "Low Stock" at ≤ 5, "Out of Stock" at 0 |
-| `image` | String | Main image URL/path |
-| `images` | [String] | Image URLs/paths (cards fall back to `images[0]`) |
+| `image` | String | Main image: a full URL, a path in `frontend/public` (e.g. `/jewelry.jpeg`), or an uploaded image `/api/images/<id>` |
+| `images` | [String] | Same kinds of values (cards fall back to `images[0]`) |
 | `seller` | ObjectId → User | Set automatically to the creator |
 | `main_category`, `average_rating`, `rating_number`, `store` | — | Optional, for imported data |
 | `createdAt`, `updatedAt` | Date | Automatic |
@@ -244,6 +261,16 @@ No card details are stored — card data only ever goes to Stripe.
 ### Cart (`carts`)
 
 `{ user (unique) → User, items: [{ product → Product, quantity }] }`. The API endpoints exist but the frontend keeps the cart in the browser instead.
+
+### ProductImage (`productimages`)
+
+| Field | Type | Notes |
+|---|---|---|
+| `data` | Binary (Buffer) | The image bytes (≤ 2 MB; uploads from the dashboard are typically 100–500 KB) |
+| `contentType` | `image/jpeg` \| `image/png` \| `image/webp` | Detected by the server from the bytes |
+| `size`, `width`, `height` | Number | Bytes and pixels |
+| `uploadedBy` | ObjectId → User | Who uploaded it |
+| `createdAt`, `updatedAt` | Date | Automatic |
 
 ### Seed data (`npm run seed`)
 
@@ -319,6 +346,13 @@ Base URL: the backend address (e.g. `http://localhost:5000`). All bodies are JSO
 | `PATCH /users/:id` | Admin | `{firstName?, lastName?, email?, role?}`; `400` for invalid role, duplicate email, or demoting yourself |
 | `DELETE /users/:id` | Admin | Also deletes their server-side cart; `400` for your own account |
 
+### Images — `/api/images`
+
+| Method & path | Access | Notes |
+|---|---|---|
+| `POST /` | Admin, Seller | `multipart/form-data` with one file field `image` (JPG/PNG/WebP, ≤ 2 MB, ≤ 5000 px) → `201 {id, url: "/api/images/<id>", width, height}`. `401`/`403` without the right login, `413` too large, `415` not an allowed image, `400` malformed request |
+| `GET /:id` | Public | The image bytes with security and caching headers (see [Product image uploads](#product-image-uploads)); `404` if unknown |
+
 ### Payment, contact, cart, health
 
 | Method & path | Access | Notes |
@@ -350,16 +384,17 @@ sequenceDiagram
     B->>B: save backupCart + pendingOrder in localStorage, empty the cart
     B->>S: redirect to Stripe's payment page
     alt customer pays
-        S-->>B: redirect to FRONTEND_URL/checkout?payment=success
+        S-->>B: redirect to FRONTEND_URL/?payment=success
         B->>API: POST /api/orders (pendingOrder)
         API->>DB: validate, save order, decrement stock
         B->>B: clear pendingOrder + backupCart, "Payment successful"
     else customer cancels
-        S-->>B: redirect to FRONTEND_URL/checkout?payment=cancelled
-        B->>B: restore cart from backupCart, "Payment was cancelled"
+        S-->>B: redirect to FRONTEND_URL/?payment=cancelled
+        B->>B: restore cart from backupCart, "Payment was cancelled", go to /checkout
     end
 ```
 
+- Stripe returns customers to the **site root** (`/?payment=…`). Every static host serves the root, so the return works even where deep links need extra host configuration. `Components/PaymentReturn` handles it on whichever page loads (older `/checkout?payment=…` links are handled too).
 - `pendingOrder` is removed as soon as the return is processed, so refreshing the success page cannot create a duplicate order.
 - If the customer leaves Stripe with the browser's Back button, the cart is restored from `backupCart` the next time the app loads.
 - **Test mode:** with a `sk_test_...` key, pay with card `4242 4242 4242 4242`, any future expiry, any CVC.
@@ -404,6 +439,8 @@ Both the **password-reset code** and the **contact form** are sent with Nodemail
 
 Because this is a single-page app, **the host must serve `index.html` for every path** (see [deployment](#13-deployment-guide)).
 
+All navigation inside the app (links, buttons, Buy Now, dashboard menu, logout) happens client-side with React Router and never triggers a full page load, so it works even on a host without that setting. Only opening a deep link directly, sharing one, or refreshing a page other than the home page depends on it. Protected pages send logged-out visitors to `/login` and back to the page they wanted after logging in.
+
 ### Browser storage
 
 | Key | Holds |
@@ -422,6 +459,8 @@ Text is translated inline (`language === "ar" ? … : …`). Choosing Arabic set
 ### Calling the API
 
 `src/Apis/config.js` exports an Axios instance whose base URL is `import.meta.env.VITE_API_BASE_URL`; a few pages call `axios`/`fetch` with the same variable. **Vite inlines this value at build time** — changing it requires a rebuild.
+
+Every component that shows a product image passes it through `resolveImageUrl()` from `src/Apis/images.js`, which prefixes uploaded images (`/api/images/<id>`) with the backend address and leaves full URLs and `frontend/public` paths unchanged. Products therefore don't store the backend's domain, so images keep working if it changes.
 
 ---
 
@@ -538,7 +577,7 @@ Craftora is deployed as **three parts**. This section lists what each part needs
 | Every endpoint, even `/health`, fails | The server never started (it only listens after the DB connects) | Check the backend logs for the connection error above |
 | Browser console: CORS error / API returns `403 Origin not allowed` | `FRONTEND_URL` doesn't exactly match the site's origin | Set it to `https://your-site` (no trailing `/`) and restart |
 | Site works locally but the live site calls `localhost` | `VITE_API_BASE_URL` wasn't set when building | Set it and **rebuild** the frontend |
-| Refreshing a page gives a 404 | No SPA fallback on the static host | Serve `index.html` for all paths |
+| Refreshing a page, or opening a shared link like `/product/…`, shows the host's own 404 page | No SPA fallback on the static host (it isn't reading `public/_redirects`) | Configure the host to rewrite every path to `/index.html` (status 200) |
 | Card checkout: "Failed to place order" | Invalid / placeholder `STRIPE_SECRET_KEY` | Add a real `sk_test_...` key |
 | Contact / Forgot Password: "could not send" | Gmail not configured or wrong app password | Set `EMAIL_USER` / `EMAIL_PASS` (app password, not the normal password) |
 | Logged out after about an hour | JWT expires after 1 h | Log in again (by design) |
@@ -554,14 +593,16 @@ These are deliberate scope limits of a graduation project, listed so nobody is s
 - **Card orders are recorded by the browser** after Stripe redirects back. A production shop would create the order from the verified Stripe webhook (`checkout.session.completed`) instead; the webhook endpoint already verifies signatures and is the natural place to add this.
 - **Orders aren't linked to user accounts** (checkout is guest-style), so there is no "My orders" page yet, although `GET /api/orders` exists.
 - **No order-status UI** — `PATCH /api/orders/:id/status` exists but the dashboard only displays status.
-- **Images are URLs**, not uploads; there is no image hosting.
+- **Replaced uploads aren't deleted.** When a product gets a new photo, the old one stays in `productimages` (harmless at this scale; a cleanup job could remove images no product links to).
+- **Uploads are stored in MongoDB**, which suits a small catalogue. A large shop would use dedicated object storage with a CDN.
+- **nodemailer 7** still has open advisories (`npm audit`); the fix is a major upgrade to v10 that hasn't been done yet.
 - **Edit Products** lists every product for sellers too (they can only *save* their own).
 - **Sessions last 1 hour** with no refresh token.
 - **No rate limiting** on login, password reset (4-digit code) or contact form.
 - `forgot-password` reveals whether an email is registered.
 - The server-side **Cart** API is unused by the frontend.
 - Two ESLint errors in `App.jsx` are false positives (`Component` used as JSX) from the lint configuration.
-- Ideas: product reviews and ratings, image uploads, order-status emails, "My orders", admin analytics.
+- Ideas: product reviews and ratings, several photos per product, order-status emails, "My orders", admin analytics.
 
 ---
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../Apis/config";
+import { resolveImageUrl } from "../../Apis/images";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../Context/CartContext";
 import { useLanguage } from "../../Context/LanguageContext";
@@ -76,11 +77,12 @@ const NewArrivals = () => {
       <div className={styles.newArrivalsProductsContainer}>
         {products.map((product) => {
           const id = product.id || product._id;
-          const imgSrc =
+          const imgSrc = resolveImageUrl(
             product.thumbnail ||
             product.image ||
             product.images?.[0] ||
-            "/default-product.jpg";
+            "/default-product.jpg"
+          );
 
           return (
             <div

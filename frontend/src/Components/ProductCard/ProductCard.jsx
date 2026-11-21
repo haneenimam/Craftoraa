@@ -2,9 +2,10 @@ import React from "react";
 import { useCart } from "../../Context/CartContext";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../Context/LanguageContext";
+import { resolveImageUrl } from "../../Apis/images";
 import styles from "./ProductCard.module.css";
 
-const ProductCard = ({ product, page }) => {
+const ProductCard = ({ product }) => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { language } = useLanguage();
@@ -27,11 +28,12 @@ const ProductCard = ({ product, page }) => {
   }
 
   const displayTitle = product.title || product.name || (isArabic ? "منتج" : "Product");
-  const imgSrc =
-    product.image || product.images?.[0] || product.thumbnail || "/default-product.jpg";
+  const imgSrc = resolveImageUrl(
+    product.image || product.images?.[0] || product.thumbnail || "/default-product.jpg"
+  );
 
   const handleNavigate = () => {
-    navigate(`/product/${productId}?page=${page}`);
+    navigate(`/product/${productId}`);
   };
 
   const handleAddToCart = (e) => {

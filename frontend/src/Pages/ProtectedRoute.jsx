@@ -1,5 +1,5 @@
 
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../Context/Auth";
@@ -7,6 +7,7 @@ import { useAuth } from "../Context/Auth";
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const [status, setStatus] = useState("loading");
   const { logout } = useAuth();
+  const location = useLocation();
 
   useEffect(() => {
     const verify = async () => {
@@ -39,7 +40,10 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
   if (status === "loading") return <div>Loading...</div>;
   if (status === "unauthorized") return <Navigate to="/unauthorized" />;
-  if (status === "unauthenticated") return <Navigate to="/login" replace />;
+  if (status === "unauthenticated") {
+    // Remember the page so login can send the user back to it
+    return <Navigate to="/login" replace state={{ from: location.pathname + location.search }} />;
+  }
   if (status === "error") {
     return <div className="text-center mt-5">Could not reach the server. Please try again.</div>;
   }

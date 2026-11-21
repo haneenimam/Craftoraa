@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axiosInstance from "../../../Apis/config.js";
+import { resolveImageUrl, uploadProductImage } from "../../../Apis/images.js";
 import styles from "./EditProducts.module.css";
 
 const categories = [
@@ -27,6 +28,7 @@ function ProductsPage() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     fetchProducts();
@@ -93,9 +95,27 @@ function ProductsPage() {
       description: p.description || "",
       category: p.category || "",
       stock: p.stock || 0,
-      image: Array.isArray(p.images) && p.images[0] ? p.images[0] : "",
+      image: p.image || (Array.isArray(p.images) && p.images[0]) || "",
     });
     setEditIndex(index);
+    window.scrollTo({ top: 0, behavior: "smooth" }); // the form is at the top
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // lets the same file be chosen again
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const url = await uploadProductImage(file);
+      setNewProduct((prev) => ({ ...prev, image: url }));
+    } catch (err) {
+      console.error("Error uploading image:", err);
+      setError(err.response?.data?.error || err.message || "Image upload failed");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleUpdate = async () => {
@@ -221,10 +241,38 @@ function ProductsPage() {
           }
         />
 
+        <div className="d-flex align-items-center gap-3 mb-3 flex-wrap">
+          <label className={`btn btn-outline-secondary mb-0 ${uploading ? "disabled" : ""}`}>
+            {uploading ? "Uploading..." : "Upload image"}
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              hidden
+              disabled={uploading}
+              onChange={handleImageUpload}
+            />
+          </label>
+          {newProduct.image && (
+            <img
+              src={resolveImageUrl(newProduct.image)}
+              alt="Selected product"
+              width="60"
+              height="60"
+              style={{ objectFit: "cover", borderRadius: "6px" }}
+              onError={(e) => (e.target.src = "/default-product.jpg")}
+            />
+          )}
+          <small className="text-muted">
+            JPG, PNG or WebP. Upload a photo or paste an image link, then click{" "}
+            {editIndex === null ? "Add Product" : "Update Product"} to save it.
+          </small>
+        </div>
+
         {editIndex === null ? (
           <button
             className={`btn w-100 ${styles.customAddBtn}`}
             onClick={handleAdd}
+            disabled={uploading}
           >
             Add Product
           </button>
@@ -232,6 +280,7 @@ function ProductsPage() {
           <button
             className={`btn w-100 ${styles.btnWarning}`}
             onClick={handleUpdate}
+            disabled={uploading}
           >
             Update Product
           </button>
@@ -259,9 +308,9 @@ function ProductsPage() {
                   <td>{p.category ?? "N/A"}</td>
                   <td>{p.stock ?? 0}</td>
                   <td>
-                    {Array.isArray(p.images) && p.images.length > 0 ? (
+                    {p.image || (Array.isArray(p.images) && p.images.length > 0) ? (
                       <img
-                        src={p.images[0]}
+                        src={resolveImageUrl(p.image || p.images[0])}
                         alt={p.name || p.title || "Product"}
                         width="50"
                         height="50"

@@ -19,7 +19,7 @@ Built with the MERN stack (MongoDB, Express, React, Node.js) as a graduation pro
 - Contact form that emails the shop
 
 **Sellers**
-- Add and edit their own products
+- Add and edit their own products, including uploading product photos (resized in the browser, validated and stored securely)
 - See orders that include their products
 
 **Admins**
@@ -49,7 +49,7 @@ Craftoraa/
 ├── backend/
 │   ├── middleware/auth.js     # JWT check + role check
 │   ├── models/                # User, Product, Order, Cart
-│   ├── routes/                # auth, products, orders, admin, payment, contact, cart
+│   ├── routes/                # auth, products, orders, admin, payment, contact, cart, images
 │   ├── seed.js                # creates the first admin + sample products
 │   ├── server.js              # Express app entry point
 │   └── .env.example
@@ -149,6 +149,8 @@ Open http://localhost:5173 and log in with the `ADMIN_EMAIL` / `ADMIN_PASSWORD` 
 | GET / PATCH / DELETE | `/api/admin/users` · `/api/admin/users/:id` | Admin |
 | POST | `/api/payment/create-checkout-session` | Public |
 | POST | `/api/contact` | Public |
+| POST | `/api/images` (upload a product photo) | Admin, Seller |
+| GET | `/api/images/:id` | Public |
 | GET | `/health` | Public |
 
 ---

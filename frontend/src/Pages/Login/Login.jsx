@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import styles from "./Login.module.css";
 import { useAuth } from "../../Context/Auth";
@@ -12,8 +12,9 @@ function Login() {
   const [passwordError, setPasswordError] = useState("");
   const [serverError, setServerError] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const { login } = useAuth(); 
+  const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -53,9 +54,10 @@ function Login() {
         return;
       }
 
-      login(data.user); 
-      localStorage.setItem("token", data.token); 
-      navigate("/");
+      login(data.user);
+      localStorage.setItem("token", data.token);
+      // Back to the protected page that sent us here, otherwise home
+      navigate(location.state?.from || "/", { replace: true });
     } catch {
       setServerError("Something went wrong. Please try again.");
     }
@@ -88,9 +90,9 @@ function Login() {
             {passwordError && <div className="invalid-feedback">{passwordError}</div>}
 
             <div className={styles.forgotPasswordWrapper}>
-              <a href="/forgot-password" className={styles.forgotPasswordLink}>
+              <Link to="/forgot-password" className={styles.forgotPasswordLink}>
                 Forgot Password?
-              </a>
+              </Link>
             </div>
           </div>
 

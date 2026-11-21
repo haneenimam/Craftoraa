@@ -24,7 +24,8 @@ function ForgotPassword() {
 
       if (data.success && data.userId) {
         setMessage("Verification code sent to your email.");
-        navigate(`/reset-password/${data.userId}`, { state: { email } });
+        // Email also goes in the URL so a refresh of the reset page keeps it
+        navigate(`/reset-password/${data.userId}?email=${encodeURIComponent(email)}`, { state: { email } });
       } else {
         setError("Email not found or reset not allowed.");
       }

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { useParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import styles from "./ResetPassword.module.css";
 import axiosInstance from "../../Apis/config";
 
@@ -7,7 +7,8 @@ function ResetPassword() {
   const { userId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const email = location.state?.email || "";
+  const [searchParams] = useSearchParams();
+  const email = location.state?.email || searchParams.get("email") || "";
 
   const [code, setCode] = useState(["", "", "", ""]);
   const [newPassword, setNewPassword] = useState("");

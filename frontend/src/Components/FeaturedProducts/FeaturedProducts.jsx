@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../Apis/config";
+import { resolveImageUrl } from "../../Apis/images";
 import { useNavigate } from "react-router-dom";
 import { FiShoppingCart, FiCreditCard } from "react-icons/fi";
 import { useCart } from "../../Context/CartContext";
@@ -83,11 +84,12 @@ const FeaturedProduct = () => {
             product.title ||
             product.name ||
             (language === "ar" ? "منتج" : "Product");
-          const imgSrc =
+          const imgSrc = resolveImageUrl(
             product.image ||
             product.images?.[0] ||
             product.thumbnail ||
-            "/default-product.jpg";
+            "/default-product.jpg"
+          );
 
           return (
             <div

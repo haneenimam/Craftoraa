@@ -117,6 +117,7 @@ app.use('/api/orders', loadRoute('./routes/orders'));
 app.use('/api/admin', loadRoute('./routes/admin'));
 app.use('/api/payment', loadRoute('./routes/payment'));
 app.use('/api/contact', loadRoute('./routes/contact'));
+app.use('/api/images', loadRoute('./routes/images'));
 
 // Health checks
 app.get('/', (req, res) => {
@@ -162,5 +163,7 @@ connectDB().then(() => {
     console.log('POST   /api/payment/create-checkout-session');
     console.log('POST   /api/payment/webhook');
     console.log('POST   /api/contact');
+    console.log('POST   /api/images');
+    console.log('GET    /api/images/:id');
   });
 });

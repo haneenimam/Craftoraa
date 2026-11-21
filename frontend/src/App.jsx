@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./Components/Navbar/Navbar";
 import Footer from "./Components/Footer/Footer";
 import ScrollToTop from "./Components/ScrollToTop/ScrollToTop";
+import PaymentReturn from "./Components/PaymentReturn/PaymentReturn";
 import ProtectedRoute from "./Pages/ProtectedRoute";
 import "./index.css";
 
@@ -62,6 +63,7 @@ const App = () => {
   return (
     <Router>
       <ScrollToTop />
+      <PaymentReturn />
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
           {/* Public Routes */}

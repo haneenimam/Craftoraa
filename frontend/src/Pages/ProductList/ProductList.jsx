@@ -179,7 +179,7 @@ const ProductList = () => {
 
       <div className={styles.grid}>
         {products.map((product) => (
-          <ProductCard key={product._id || product.id} product={product} page={page} />
+          <ProductCard key={product._id || product.id} product={product} />
         ))}
       </div>
 

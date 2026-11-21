@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import axiosInstance from '../../Apis/config';
 import ProductCard from '../../Components/ProductCard/ProductCard';
 import styles from '../ProductList/ProductList.module.css';
@@ -16,7 +16,8 @@ const CategoryProducts = () => {
   useEffect(() => {
     const fetchCategoryProducts = async () => {
       try {
-        const response = await axiosInstance.get(`/api/products?category=${encodeURIComponent(category)}`);
+        // limit=100 so a category is never silently cut off at the default page size of 20
+        const response = await axiosInstance.get(`/api/products?category=${encodeURIComponent(category)}&limit=100`);
         setProducts(response.data.products || []);
       } catch (error) {
         setError('Failed to fetch products');
@@ -32,6 +33,9 @@ const CategoryProducts = () => {
       fetchCategoryProducts();
     }
   }, [category]);
+
+  // No category in the URL: show every product instead of loading forever
+  if (!category) return <Navigate to="/product-list" replace />;
 
   if (loading) return <div className={styles.loading}>Loading products...</div>;
   if (error) return <div className={styles.error}>{error}</div>;

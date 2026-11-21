@@ -43,8 +43,9 @@ router.post('/create-checkout-session', async (req, res) => {
       payment_method_types: ['card'],
       line_items,
       mode: 'payment',
-      success_url: `${FRONTEND_URL}/checkout?payment=success`,
-      cancel_url: `${FRONTEND_URL}/checkout?payment=cancelled`,
+      // Return to the site root: every host serves it, even without an SPA fallback
+      success_url: `${FRONTEND_URL}/?payment=success`,
+      cancel_url: `${FRONTEND_URL}/?payment=cancelled`,
     });
 
     res.json({ url: session.url });

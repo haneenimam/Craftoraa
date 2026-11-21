@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axiosInstance from "../../Apis/config";
 import { useCart } from "../../Context/CartContext";
 import { useLanguage } from "../../Context/LanguageContext"; 
+import { resolveImageUrl } from "../../Apis/images";
 import styles from "./ProductDetails.module.css";
 
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { addToCart } = useCart();
   const { language } = useLanguage();
 
@@ -41,12 +43,19 @@ const ProductDetails = () => {
       for (let i = 0; i < quantity; i++) {
         addToCart(product);
       }
-      window.location.href = "/checkout";
+      // In-app navigation: a full page load here 404s on hosts without an SPA fallback
+      // and could also drop the cart before it is saved
+      navigate("/checkout");
     }
   };
 
   const handleContinueShopping = () => {
-    navigate(-1);
+    // Opened directly (shared link / new tab): there is no in-app page to go back to
+    if (location.key === "default") {
+      navigate("/product-list");
+    } else {
+      navigate(-1);
+    }
   };
 
   const handleIncrease = () => {
@@ -76,13 +85,13 @@ const ProductDetails = () => {
       <div className={`${styles["product-details-flex"]} row`}>
         <div className={`${styles["product-image"]} col-md-6`}>
           <img
-            src={
+            src={resolveImageUrl(
               product.image ||
               product.thumbnail ||
               product.img ||
               product.images?.[0] ||
               "/default-product.jpg"
-            }
+            )}
             alt={product.title || "Product"}
             className="img-fluid"
             onError={(e) => (e.target.src = "/default-product.jpg")}
